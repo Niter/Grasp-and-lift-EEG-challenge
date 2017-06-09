@@ -18,17 +18,18 @@ from glob import glob
 import numpy as np
 import pandas as pd
 from time import time
+from read_adapter import *
 
 from sklearn.metrics import roc_auc_score
 
 # Lasagne (& friends) imports
-import theano
+# import theano
 from nolearn.lasagne import BatchIterator, NeuralNet, TrainSplit
-from lasagne.objectives import aggregate, binary_crossentropy
-from lasagne.layers import (InputLayer, DropoutLayer, DenseLayer, Conv1DLayer,
-                            Conv2DLayer)
-from lasagne.updates import nesterov_momentum, adam
-from theano.tensor.nnet import sigmoid
+# from lasagne.objectives import aggregate, binary_crossentropy
+# from lasagne.layers import (InputLayer, DropoutLayer, DenseLayer, Conv1DLayer,
+#                             Conv2DLayer)
+# from lasagne.updates import nesterov_momentum, adam
+# from theano.tensor.nnet import sigmoid
 
 from mne import concatenate_raws, pick_types
 
