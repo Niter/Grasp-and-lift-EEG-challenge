@@ -34,6 +34,7 @@ from sklearn.metrics import roc_auc_score
 from preprocessing.aux import getEventNames, load_raw_data
 
 from multiprocessing import Pool
+from read_adapter import subjects_path_list
 cols = getEventNames()
 
 
@@ -142,8 +143,7 @@ start_time = time()
 for subject in subjects:
     print 'Loading data for subject %d...' % subject
     # ############### READ DATA ###############################################
-    data_train, labels_train, data_test, labels_test = load_raw_data(subject,
-                                                                     test)
+    data_train, labels_train, data_test, labels_test = load_raw_data(subject, test)
 
     trainPreprocessed = None
     testPreprocessed = None
@@ -158,6 +158,8 @@ for subject in subjects:
     # ### preprocessing ####
     print 'Preprocessing Training data...'
 
+    # print 'data_train:', data_train, data_train.shape
+    # print 'labels_train:', labels_train, labels_train.shape
     if cache_preprocessed and os.path.isfile(cacheFile):
         # if cache activated + file exist, load file
         trainPreprocessed = np.load(cacheFile)

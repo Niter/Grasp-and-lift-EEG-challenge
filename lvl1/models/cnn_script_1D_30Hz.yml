@@ -2,7 +2,7 @@ Meta:
   file: 'cnn_script_1D_30Hz'
 
 filters: [[30]]
-bags: 10
+bags: 3
 
-delay: 4000
-skip: 8
+delay: 500
+skip: 1

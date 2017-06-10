@@ -3,13 +3,13 @@
 Created on Thu Jul 30 21:28:32 2015.
 
 Script written by Tim Hochberg with parameter tweaks by Bluefool.
-https://www.kaggle.com/bitsofbits/grasp-and-lift-eeg-detection/naive-nnet
-
+https://www.kaggle.com/bitsofbits/grasp-and-lift-eeg-detection/naive-nnet 
 Modifications: rc, alex
 """
 import os
 import sys
-if __name__ == '__main__' and __package__ is None:
+# if __name__ == '__main__' and __package__ is None:
+if __package__ is None:
     filePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.append(filePath)
 
@@ -18,23 +18,24 @@ from glob import glob
 import numpy as np
 import pandas as pd
 from time import time
-from read_adapter import *
 
 from sklearn.metrics import roc_auc_score
 
 # Lasagne (& friends) imports
-# import theano
+import theano
 from nolearn.lasagne import BatchIterator, NeuralNet, TrainSplit
-# from lasagne.objectives import aggregate, binary_crossentropy
-# from lasagne.layers import (InputLayer, DropoutLayer, DenseLayer, Conv1DLayer,
-#                             Conv2DLayer)
-# from lasagne.updates import nesterov_momentum, adam
-# from theano.tensor.nnet import sigmoid
+from lasagne.objectives import aggregate, binary_crossentropy
+from lasagne.layers import (InputLayer, DropoutLayer, DenseLayer, Conv1DLayer,
+                            Conv2DLayer)
+from lasagne.updates import nesterov_momentum, adam
+from theano.tensor.nnet import sigmoid
 
 from mne import concatenate_raws, pick_types
 
 from preprocessing.aux import creat_mne_raw_object
 from preprocessing.filterBank import FilterBank
+from read_adapter import *
+from config import *
 
 # Silence some warnings from lasagne
 import warnings
@@ -67,17 +68,18 @@ else:
 
 ###########
 SUBJECTS = list(range(1, 13))
-TRAIN_SERIES = list(range(1, 9))
-TEST_SERIES = [9, 10]
+TRAIN_SERIES = list(range(1, 5))
+TEST_SERIES = [5]
 
-N_ELECTRODES = 32
-N_EVENTS = 6
+N_ELECTRODES = 14
+N_EVENTS = 3
 
 SAMPLE_SIZE = delay
-DOWNSAMPLE = skip
+DOWNSAMPLE = 1
 TIME_POINTS = SAMPLE_SIZE // DOWNSAMPLE
 
-TRAIN_SIZE = 5120
+# TRAIN_SIZE = 5120
+TRAIN_SIZE = 100
 
 # We encapsulate the event / electrode data in a Source object.
 
@@ -97,17 +99,18 @@ class Source:
 
     def load_raw_data(self, subject, series):
         """Load data for a subject / series."""
-        test = series == TEST_SERIES
+        # test = series == TEST_SERIES
+        test = False
         if not test:
-            fnames = [glob('../data/train/subj%d_series%d_data.csv' %
-                      (subject, i)) for i in series]
+            fnames = [glob(get_horizo_path(subject, i)) for i in series]
         else:
             fnames = [glob('../data/test/subj%d_series%d_data.csv' %
                       (subject, i)) for i in series]
         fnames = list(np.concatenate(fnames))
         fnames.sort()
-        raw_train = [creat_mne_raw_object(fname, read_events=not test)
-                     for fname in fnames]
+        self.fnames = fnames
+        action_1D_type = 'HO'
+        raw_train = [creat_mne_raw_object(fnames[i], i, read_events=action_1D_type) for i in range(len(fnames))]
         raw_train = concatenate_raws(raw_train)
         # pick eeg signal
         picks = pick_types(raw_train.info, eeg=True)
@@ -117,8 +120,10 @@ class Source:
         self.data = preprocessData(self.data)
 
         if not test:
-
-            self.events = raw_train._data[32:].transpose()
+            self.events = raw_train._data[14:].transpose()
+        # print self.data.shape, self.events.shape
+        # (num_time_points, num_ch), (num_time_point, num_labels)
+            
 
     def normalize(self):
         """normalize data."""
@@ -221,9 +226,10 @@ class IndexBatchIterator(BatchIterator):
         X = self.Xbuf[:count]
         Y = self.Ybuf[:count]
         for i, ndx in enumerate(X_indices):
-            if ndx == -1:
-                ndx = np.random.randint(len(self.source.events))
-            sample = self.augmented[ndx:ndx+SAMPLE_SIZE]
+            # if ndx == -1:
+            while (ndx < START_TRAIN):
+                ndx = np.random.randint(START_TRAIN, len(self.source.events))
+            sample = self.augmented[(ndx-SAMPLE_SIZE):ndx]
             # Reverse so we get most recent point, otherwise downsampling drops
             # the last
             # DOWNSAMPLE-1 points.
@@ -235,6 +241,7 @@ class IndexBatchIterator(BatchIterator):
             if y_indices is not None:
                 Y[i] = self.source.events[ndx]
         Y = None if (y_indices is None) else Y
+
         return X, Y
 
 
@@ -246,8 +253,7 @@ def create_net(train_source, test_source, batch_size=128, max_epochs=100,
     """Create NN."""
     if train_val_split:
         train_val_split = TrainSplit(eval_size=0.2)
-    else:
-        train_val_split = TrainSplit(eval_size=False)
+    else: train_val_split = TrainSplit(eval_size=False)
 
     batch_iter_train = IndexBatchIterator(train_source, batch_size=batch_size)
     batch_iter_test = IndexBatchIterator(test_source, batch_size=batch_size)
@@ -288,7 +294,7 @@ def create_net(train_source, test_source, batch_size=128, max_epochs=100,
                          update=adam,
                          update_learning_rate=0.001,
                          objective_loss_function=loss,
-                         regression=True,
+                         regression=False,
                          train_split=train_val_split,
                          **LF.kwargs)
     else:
@@ -304,7 +310,7 @@ def create_net(train_source, test_source, batch_size=128, max_epochs=100,
                          # update=adam,
                          # update_learning_rate=0.001,
                          objective_loss_function=loss,
-                         regression=True,
+                         regression=False,
                          train_split=train_val_split,
                          **LF.kwargs)
 
@@ -320,7 +326,7 @@ train_indices = np.zeros([TRAIN_SIZE], dtype=int) - 1
 
 np.random.seed(67534)
 
-valid_series = [7, 8]
+valid_series = [5]
 max_epochs = 100
 
 if test is False:
@@ -329,26 +335,23 @@ if test is False:
         probs_tot = []
         lbls_tot = []
         for subject in range(1, 13):
+            # TODO: Also include the Nothing state to classification
             tseries = sorted(set(TRAIN_SERIES) - set(valid_series))
             train_source = TrainSource(subject, tseries)
             test_source = TestSource(subject, valid_series, train_source)
             net = create_net(train_source, test_source, max_epochs=max_epochs,
                              train_val_split=False)
             dummy = net.fit(train_indices, train_indices)
-            indices = np.arange(len(test_source.data))
+            indices = np.arange(START_TRAIN, len(test_source.data))
             probs = net.predict_proba(indices)
-    
-            auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in
-                          zip(test_source.events.T, probs.T)])
+            auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in zip(test_source.events[START_TRAIN:].T[1:, :], probs.T[1:, :])])
             print 'Bag %d, subject %d, AUC: %.5f' % (bag, subject, auc)
             probs_tot.append(probs)
-            lbls_tot.append(test_source.events)
+            lbls_tot.append(test_source.events[START_TRAIN:])
     
         probs_tot = np.concatenate(probs_tot)
         lbls_tot = np.concatenate(lbls_tot)
-        auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in
-                      zip(lbls_tot.transpose(), probs_tot.transpose())])
-        print auc
+        auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in zip(lbls_tot.transpose(), probs_tot.transpose())])
         probs_bags.append(probs_tot)
     
     probs_bags = np.mean(probs_bags, axis=0)

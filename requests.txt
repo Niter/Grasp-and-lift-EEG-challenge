@@ -9,3 +9,5 @@ pyyaml
 pandas
 mne
 nolearn
+progressbar
+pyriemann

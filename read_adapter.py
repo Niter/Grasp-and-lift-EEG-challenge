@@ -4,6 +4,9 @@ import scipy.io as sio
 DATA_PREPATH = '../data/'
 subjects_path_list = glob(DATA_PREPATH + '*/')
 
+def get_all_horizon_path_from_the_subject(idx_subject):
+    return subjects_path_list[idx_subject] + 'trialHO*.csv'
+
 def get_horizo_path(idx_subject, idx_sample):
     return subjects_path_list[idx_subject] + 'trialHO%d.csv'%idx_sample
 

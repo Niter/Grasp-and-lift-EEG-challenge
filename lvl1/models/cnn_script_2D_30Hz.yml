@@ -3,7 +3,7 @@ Meta:
 
 filt2Dsize: 16
 filters: [[30]]
-bags: 10
+bags: 5
 
-delay: 4000
-skip: 8
+delay: 500
+skip: 1

@@ -4,8 +4,8 @@ Created on Wed Jul  8 22:00:08 2015.
 
 @author: rc, alexandre
 """
-
-
+import os
+import sys
 import numpy as np
 import pandas as pd
 from mne.io import RawArray
@@ -14,19 +14,24 @@ from mne import create_info, concatenate_raws, pick_types
 from sklearn.base import BaseEstimator, TransformerMixin
 from glob import glob
 
+from config import CH_NAMES, START_TRAIN
+from read_adapter import get_all_horizon_path_from_the_subject, get_horizo_velocity, get_vertic_velocity
+
 
 def getChannelNames():
     """Return Channels names."""
-    return ['Fp1', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2',
-            'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'TP9', 'CP5', 'CP1', 'CP2',
-            'CP6', 'TP10', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO9', 'O1', 'Oz',
-            'O2', 'PO10']
+    # return ['Fp1', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2',
+    #         'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'TP9', 'CP5', 'CP1', 'CP2',
+    #         'CP6', 'TP10', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO9', 'O1', 'Oz',
+    #         'O2', 'PO10']
+    return CH_NAMES
 
 
 def getEventNames():
     """Return Event name."""
-    return ['HandStart', 'FirstDigitTouch', 'BothStartLoadPhase', 'LiftOff',
-            'Replace', 'BothReleased']
+    # return ['HandStart', 'FirstDigitTouch', 'BothStartLoadPhase', 'LiftOff',
+    #         'Replace', 'BothReleased']
+    return ['no_vel', 'pos_vel', 'neg_vel']
 
 
 def load_raw_data(subject, test=False):
@@ -38,70 +43,84 @@ def load_raw_data(subject, test=False):
     of series 9 and test. Otherwise, training data are series 1 to 6 and test
     data series 7 and 8.
     """
-    fnames_train = glob('../data/train/subj%d_series*_data.csv' % (subject))
+    # fnames_train = glob('../data/train/subj%d_series*_data.csv' % (subject))
+    fnames_train = glob(get_all_horizon_path_from_the_subject(subject))
     fnames_train.sort()
     if test:
-        fnames_test = glob('../data/test/subj%d_series*_data.csv' % (subject))
+        fnames_test = glob(get_all_horizon_path_from_the_subject(subject))
         fnames_test.sort()
     else:
-        fnames_test = fnames_train[-2:]
-        fnames_train = fnames_train[:-2]
+        fnames_test = fnames_train[-1:]
+        fnames_train = fnames_train[:-1]
 
     # read and concatenate all the files
-    raw_train = [creat_mne_raw_object(fname) for fname in fnames_train]
+    action_1D_type = 'HO'
+    raw_train = [creat_mne_raw_object(fname, i, read_events=action_1D_type) for i, fname in enumerate(fnames_train)]
     raw_train = concatenate_raws(raw_train)
     # pick eeg signal
     picks = pick_types(raw_train.info, eeg=True)
 
     # get training data
     data_train = raw_train._data[picks].T
-    labels_train = raw_train._data[32:].T
+    labels_train = raw_train._data[len(CH_NAMES):].T
 
-    raw_test = [creat_mne_raw_object(fname, read_events=not test) for fname in
-                fnames_test]
+    raw_test = [creat_mne_raw_object(fname, i, read_events=action_1D_type) for i, fname in enumerate(fnames_test)]
     raw_test = concatenate_raws(raw_test)
     data_test = raw_test._data[picks].T
 
     # extract labels if validating on series 7&8
     labels_test = None
     if not test:
-        labels_test = raw_test._data[32:].T
+        labels_test = raw_test._data[len(CH_NAMES):].T
 
     return data_train, labels_train, data_test, labels_test
 
 
-def creat_mne_raw_object(fname, read_events=True):
+def creat_mne_raw_object(fname, idx_subject, read_events='HO'):
     """Create a mne raw instance from csv file."""
     # Read EEG file
-    data = pd.read_csv(fname)
+    # data = pd.read_csv(fname)
+    data = np.loadtxt(fname, delimiter=',')
+    data = data.T[2:, :]
 
     # get chanel names
-    ch_names = list(data.columns[1:])
+    # ch_names = list(data.columns[1:])
+    ch_names = CH_NAMES
 
     # read EEG standard montage from mne
     montage = read_montage('standard_1005', ch_names)
 
     ch_type = ['eeg']*len(ch_names)
-    data = 1e-6*np.array(data[ch_names]).T
+    data = 1e-6*np.array(data[:])
 
     if read_events:
         # events file
         ev_fname = fname.replace('_data', '_events')
         # read event file
         events = pd.read_csv(ev_fname)
-        events_names = events.columns[1:]
-        events_data = np.array(events[events_names]).T
+        events_names = ['Nothing', 'Positive', 'Negative']
+        # events_data = np.array(events[events_names]).T
+        events_data = get_horizo_velocity() if read_events == 'HO' else \
+                      get_vertic_velocity() if read_events == 'VE' else None
+
+        events_data = events_data.T[idx_subject, :]
+        events = np.zeros([3, events_data.shape[0]])
+        events[0, events_data == 0] = 1
+        events[1, events_data > 0] = 1
+        events[2, events_data < 0] = 1
 
         # define channel type, the first is EEG, the last 6 are stimulations
-        ch_type.extend(['stim']*6)
-        ch_names.extend(events_names)
+        ch_type.extend(['stim']*3)
+        # ch_names.extend(events_names)
+        ch_names = ch_names + events_names
         # concatenate event file and data
-        data = np.concatenate((data, events_data))
+        data = np.concatenate((data, events))
 
     # create and populate MNE info structure
-    info = create_info(ch_names, sfreq=500.0, ch_types=ch_type,
+
+    info = create_info(ch_names, sfreq=128.0, ch_types=ch_type,
                        montage=montage)
-    info['filename'] = fname
+    info['experimento'] = fname
 
     # create raw object
     raw = RawArray(data, info, verbose=False)

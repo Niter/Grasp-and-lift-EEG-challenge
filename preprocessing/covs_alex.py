@@ -12,6 +12,8 @@ from multiprocessing import Pool
 from functools import partial
 from mne.event import _find_stim_steps
 
+from config import N_EVENTS
+
 
 def create_sequence(events):
     """create sequence from events.
@@ -22,32 +24,32 @@ def create_sequence(events):
     sequence = np.zeros((events.shape[1], 1))
 
     # get hand start
-    handStart = np.int64(_find_stim_steps(np.atleast_2d(events[0]), 0)[::2, 0])
+    no_vel = np.int64(_find_stim_steps(np.atleast_2d(events[0]), 0)[::2, 0])
+    pos_vel = np.int64(_find_stim_steps(np.atleast_2d(events[1]), 0)[::2, 0])
+    neg_vel = np.int64(_find_stim_steps(np.atleast_2d(events[2]), 0)[::2, 0])
+    # print 'events', events, events.shape
+    # print 'no_vel', no_vel, no_vel.shape
+    # print 'pos_vel', pos_vel, pos_vel.shape
+    # print 'neg_vel', neg_vel, neg_vel.shape
 
-    # lift
-    lift_on = np.int64(_find_stim_steps(np.atleast_2d(events[1]), 0)[::2, 0])
-    lift_off = np.int64(_find_stim_steps(np.atleast_2d(events[3]), 0)[1::2, 0])
+    sequence[events[0] == 1] = 0
+    sequence[events[1] == 1] = 1
+    sequence[events[2] == 1] = 2
 
-    # replace
-    replace_on = np.int64(_find_stim_steps(np.atleast_2d(events[4]), 0)
-                          [::2, 0])
-    replace_off = np.int64(_find_stim_steps(np.atleast_2d(events[5]), 0)
-                           [1::2, 0])
-
-    for i in range(len(handStart)):
-        j = 1
-        sequence[(handStart[i] - 250):handStart[i]] = j
-        j += 1
-        sequence[handStart[i]:lift_on[i]] = j
-        j += 1
-        sequence[lift_on[i]:lift_off[i]] = j
-        j += 1
-        sequence[lift_off[i]:replace_on[i]] = j
-        j += 1
-        sequence[replace_on[i]:replace_off[i]] = j
-        j += 1
-        sequence[replace_off[i]:(replace_off[i] + 250)] = j
-        j += 1
+    # for i in range(len(handStart)):
+    #     j = 1
+    #     sequence[(handStart[i] - 250):handStart[i]] = j
+    #     j += 1
+    #     sequence[handStart[i]:lift_on[i]] = j
+    #     j += 1
+    #     sequence[lift_on[i]:lift_off[i]] = j
+    #     j += 1
+    #     sequence[lift_off[i]:replace_on[i]] = j
+    #     j += 1
+    #     sequence[replace_on[i]:replace_off[i]] = j
+    #     j += 1
+    #     sequence[replace_off[i]:(replace_off[i] + 250)] = j
+    #     j += 1
 
     return sequence
 
@@ -122,6 +124,7 @@ class DistanceCalculatorRafal(BaseEstimator, TransformerMixin):
         for metric in self.metric_dist:
             self.mdm.metric_dist = metric
             feat = self.mdm.transform(X)
+            print 'feat', feat, feat.shape
             # substract distance of the class 0
             feat = feat[:, 0:6] - feat[:, 6:]
             feattr.append(feat)
