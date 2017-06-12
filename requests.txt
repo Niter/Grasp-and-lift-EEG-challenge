@@ -7,9 +7,9 @@ scikit-learn==0.17
 tabulate==0.7.5
 pyyaml
 pandas
-mne
-nolearn
+mne==0.10
+nolearn==0.6
 matplotlib
 progressbar
-pyriemann
+pyriemann==0.2.2
 keras==0.1.2
