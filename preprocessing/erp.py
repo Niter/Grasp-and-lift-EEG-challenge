@@ -18,6 +18,7 @@ from pyriemann.classification import MDM
 
 from preprocessing.aux import getChannelNames, getEventNames, sliding_window
 
+from config import N_EVENTS
 
 def toMNE(X, y=None):
     """Tranform array into MNE for epoching."""

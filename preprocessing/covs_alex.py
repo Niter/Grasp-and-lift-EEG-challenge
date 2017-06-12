@@ -125,7 +125,7 @@ class DistanceCalculatorRafal(BaseEstimator, TransformerMixin):
         for metric in self.metric_dist:
             self.mdm.metric_dist = metric
             feat = self.mdm.transform(X)
-            print 'feat', feat, feat.shape
+            # print 'feat', feat, feat.shape
             # substract distance of the class 0
             feat = feat[:, 0:N_EVENTS] - feat[:, N_EVENTS:]
             feattr.append(feat)
