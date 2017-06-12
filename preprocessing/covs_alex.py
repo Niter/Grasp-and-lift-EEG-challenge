@@ -20,6 +20,7 @@ def create_sequence(events):
 
     Create a sequence of non-overlapped States from labels.
     """
+    # TODO: Make sure I have correctly understand what they did
     # init variable
     sequence = np.zeros((events.shape[1], 1))
 
