@@ -173,11 +173,17 @@ def delay_preds(X, delay=100, skip=2, subsample=1, start=0, jump=None):
     if jump is None:
         jump = range(0, delay, skip)
     Ns, Ne = X.shape
+    # print 'Ns:', Ns
+    # print 'Ne:', Ne
     Ns_subsampled = len(range(start, Ns, subsample))
     out = np.zeros((Ns_subsampled, Ne * len(jump)))
     for i, sk in enumerate(jump):
         chunk = X[0:(Ns - sk)][start::subsample]
         out[(Ns_subsampled-chunk.shape[0]):, (i * Ne):((i + 1) * Ne)] = chunk
+    # print 'out:', out, out.shape
+    # print 'delay:', delay
+    # print 'skip:', skip
+    # print 'subsample:', subsample
     return out
 
 

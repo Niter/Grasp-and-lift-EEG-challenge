@@ -34,7 +34,10 @@ from sklearn.metrics import roc_auc_score
 from preprocessing.aux import getEventNames, load_raw_data
 
 from multiprocessing import Pool
+
 from read_adapter import subjects_path_list
+from config import subjects
+
 cols = getEventNames()
 
 
@@ -54,6 +57,8 @@ def doCols(col):
     """Train and Predict for one event."""
     p = []
     for clf in clfs:
+        # print 'trainPreprocessed:', trainPreprocessed, trainPreprocessed.shape
+        # print 'labels_train[:, col]', labels_train[:, col], labels_train[:, col].shape
         clf.fit(trainPreprocessed, labels_train[:, col])
         p.append(clf.predict_proba(testPreprocessed)[:, 1])
     return p
@@ -95,6 +100,8 @@ if 'PostPreprocessing' in yml.keys():
     pipe = []
     for item in yml['PostPreprocessing']:
         for method, params in item.iteritems():
+            # print 'method:', method
+            # print 'params:', params
             pipe.append(_from_yaml_to_func(method, params))
     postpreprocess_base = make_pipeline(*pipe)
 
@@ -131,7 +138,6 @@ if not os.path.exists(saveFolder):
     os.makedirs(saveFolder)
 
 # #### define lists #####
-subjects = range(1, 13)
 widgets = ['Cross Val : ', Percentage(), ' ', Bar(marker=RotatingMarker()),
            ' ', ETA(), ' ']
 pbar = ProgressBar(widgets=widgets, maxval=len(subjects))
@@ -166,6 +172,8 @@ for subject in subjects:
     else:
         # if not, do preprocessing
         trainPreprocessed = preprocess.fit_transform(data_train, labels_train)
+        # print 'have trainPreprocessed'
+        # print 'trainPreprocessed:', trainPreprocessed
         # if cache activated but no file, save
         if cache_preprocessed:
             np.save(cacheFile, trainPreprocessed)
@@ -227,8 +235,7 @@ for subject in subjects:
     testPreprocessed[np.isnan(testPreprocessed)] = 0
 
     if postpreprocess is not None:
-        trainPreprocessed = postpreprocess.fit_transform(trainPreprocessed,
-                                                         labels_train)
+        trainPreprocessed = postpreprocess.fit_transform(trainPreprocessed, labels_train)
         for name, step in postpreprocess.steps:
             if hasattr(step, 'update_subsample'):
                 step.update_subsample(subsample, subsample_test)
@@ -264,7 +271,7 @@ for subject in subjects:
 
 
 if not test:
-    labels = np.load('../infos_val.npy')[:, :-2]
+    labels = np.load('../infos_val.npy')[:, :-1]
 
 # ## AGGREGATE HERE
 preds_tot = []
@@ -272,12 +279,12 @@ preds_tot = []
 for i in range(len(clfs)):
     preds_tot.append([])
     for subject in subjects:
-        preds_tot[i].append(np.load('%s/sub%d_clf%d.npy' % (saveFolder,
-                                                            subject, i)))
+        preds_tot[i].append(np.load('%s/sub%d_clf%d.npy' % (saveFolder, subject, i)))
     preds_tot[i] = np.concatenate(preds_tot[i])
+    # print 'preds_tot:', preds_tot, len(preds_tot), preds_tot[0].shape
+    # print 'labels:', labels, len(labels), labels[0].shape
     if not test:
-        auc = [roc_auc_score(trueVals, p) for trueVals, p in
-               zip(labels[::subsample_test].T, preds_tot[i].T)]
+        auc = [roc_auc_score(trueVals, p) for trueVals, p in zip(labels[::subsample_test].T, preds_tot[i].T)]
         report['AUC'] = np.mean(auc)
         print np.mean(auc)
 

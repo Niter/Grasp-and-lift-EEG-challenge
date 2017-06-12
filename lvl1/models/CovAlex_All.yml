@@ -17,8 +17,8 @@ imports:
 # Meta variables
 Meta:
   file: 'CovAlex_All'
-  cores: 6
-  subsample: 10
+  cores: 4
+  subsample: 1
   subsample_test: 1
   cachePreprocessed: False
   addPreprocessed:
@@ -27,10 +27,10 @@ Meta:
       - 'CovsAlex_1-15Hz_500pts'
       - 'CovsAlex_7-30Hz_500pts'
       - 'CovsAlex_20-35Hz_500pts'
-      - 'CovsAlex_70-150Hz_500pts'
       - 'CovsRafal_35Hz_256pts'
       - 'CovsRafal_35Hz_500pts'
       - 'CovsERP_Dist'
+      #- 'CovsAlex_70-150Hz_500pts'
 
 # preprocessing functions receive arguments: X, y(only for train)
 Preprocessing:
@@ -40,8 +40,8 @@ PostPreprocessing:
     - SubSample:
         subsample: 1
     - DelayPreds:
-        delay: 1000 / subsample
-        skip: 100 / subsample
+        delay: 100 / subsample
+        skip: 20 / subsample
 
 Models:
   #- '("lda",LDA())'

@@ -22,6 +22,11 @@ from sklearn.pipeline import make_pipeline
 from preprocessing.aux import load_raw_data
 from ensembling.NeuralNet import NeuralNet
 
+from config import subjects, CH_NAMES, START_TRAIN, N_EVENTS
+import theano
+theano.config.optimizer = 'None'
+# theano.config.exception_verbosity = 'high'
+
 
 def _from_yaml_to_func(method, params):
     """go from yaml to method.
@@ -33,7 +38,6 @@ def _from_yaml_to_func(method, params):
         for key, val in params.iteritems():
             prm[key] = eval(str(val))
     return eval(method)(**prm)
-
 # ## read model parameters ###
 yml = yaml.load(open(sys.argv[1]))
 
@@ -100,7 +104,6 @@ if not os.path.exists(saveFolder):
     os.makedirs(saveFolder)
 
 # #### define lists #####
-subjects = range(1, 13)
 widgets = ['Cross Val : ', Percentage(), ' ', Bar(marker=RotatingMarker()),
            ' ', ETA(), ' ']
 pbar = ProgressBar(widgets=widgets, maxval=len(subjects))
@@ -170,6 +173,7 @@ for subject in subjects:
         testPreprocessed = postpreprocess.transform(testPreprocessed)
     testPreprocessed[np.isnan(testPreprocessed)] = 0
 
+    # print 'architecture:', architecture
     model = NeuralNet(None, architecture, training_params, 
                       partsTrain=parts_train,partsTest=parts_test,
                       delay=delay,skip=skip,subsample=subsample,

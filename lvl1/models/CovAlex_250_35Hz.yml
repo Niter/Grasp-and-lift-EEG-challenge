@@ -21,8 +21,8 @@ imports:
 # Meta variables
 Meta:
   file: 'CovsAlex_35Hz_250pts'
-  cores: 6
-  subsample: 10
+  cores: 4
+  subsample: 1
   subsample_test: 1
   cachePreprocessed: True
 
@@ -31,7 +31,7 @@ Preprocessing:
   - FilterBank:
       filters: [[35]]
   - SlidingWindow:
-      window: 250
+      window: 100
       subsample: subsample
       estimator: _lwf
   - DistanceCalculatorAlex:
@@ -42,7 +42,7 @@ Preprocessing:
 
 PostPreprocessing:
     - DelayPreds:
-        delay: 1000 / subsample
+        delay: 100 / subsample
         skip: 20 / subsample
 
 Models:

@@ -1,7 +1,7 @@
 from glob import glob
 import scipy.io as sio
 
-DATA_PREPATH = '../data/'
+DATA_PREPATH = '/Users/Lucien/git/eeg_mibk/Grasp-and-lift-EEG-challenge/data/'
 subjects_path_list = glob(DATA_PREPATH + '*/')
 
 def get_all_horizon_path_from_the_subject(idx_subject):

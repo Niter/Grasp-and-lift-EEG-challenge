@@ -79,6 +79,7 @@ class NeuralNet(BaseEstimator,ClassifierMixin):
         
         # create the model
         self.model = buildNN(self.architecture, self.training_params, input_dim)
+        # print self.model.get_config()
             
         widgets = ['Training : ', Percentage(), ' ', Bar(marker=RotatingMarker()),
            ' ', ETA(), ' ']
@@ -102,6 +103,9 @@ class NeuralNet(BaseEstimator,ClassifierMixin):
             trainData = trainData[::self.subsample]
             targets = targets[::self.subsample]
             
+            # print 'trainData:', trainData.shape
+            # print 'targets:', targets.shape
+            # print theano.printing.debugprint(self.model)
             self.model.fit(trainData, targets, nb_epoch=self.smallEpochs, 
                            batch_size=512,verbose=0,show_accuracy=True)
             

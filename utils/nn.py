@@ -15,6 +15,8 @@ from keras.optimizers import SGD, Adam
 from keras.regularizers import l2
 
 
+from config import N_EVENTS
+
 def buildNN(architecture,training_params,input_dim):
     """Lay out a Neural Network as described in the YAML file."""
     current_units = input_dim
@@ -51,7 +53,7 @@ def buildNN(architecture,training_params,input_dim):
         if layer_name == 'Flatten':
             model.add(Flatten())
         if layer_name == 'Output':
-            model.add(Dense(current_units, 6, init='glorot_uniform'))
+            model.add(Dense(current_units, N_EVENTS, init='glorot_uniform'))
             model.add(Activation('sigmoid'))
     if not training_params.has_key('optim') or training_params['optim'] == 'sgd':
         optim = SGD(lr=training_params['lr'], decay=float(training_params['decay']), momentum=training_params['momentum'], nesterov=True)    

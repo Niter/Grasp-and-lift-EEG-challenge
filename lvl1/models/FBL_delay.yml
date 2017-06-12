@@ -16,8 +16,8 @@ imports:
 # Meta variables
 Meta:
   file: 'FBL_delay100_skip20'
-  cores: 3
-  subsample: 10
+  cores: 4
+  subsample: 1
   cachePreprocessed: False
 
 # preprocessing functions receive arguments: X, y(only for train)
@@ -29,8 +29,8 @@ Preprocessing:
 
 PostPreprocessing:
     - DelayPreds:
-        delay: 1000 / subsample
-        skip: 200 / subsample
+        delay: 100 / subsample
+        skip: 20 / subsample
 
 Models:
   - '("l1",Normalizer(norm="l1")),("lr",LogisticRegression())'

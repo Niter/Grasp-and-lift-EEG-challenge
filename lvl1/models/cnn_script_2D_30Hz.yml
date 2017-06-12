@@ -5,5 +5,5 @@ filt2Dsize: 16
 filters: [[30]]
 bags: 5
 
-delay: 500
+delay: 200
 skip: 1

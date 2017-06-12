@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
-array=( val test )
+array=( val )
+cd ..
+python genInfos.py
+cd lvl1
+rm -rf val/*
 for i in "${array[@]}"
 do
     # generate validation preds

@@ -35,7 +35,7 @@ from mne import concatenate_raws, pick_types
 from preprocessing.aux import creat_mne_raw_object
 from preprocessing.filterBank import FilterBank
 from read_adapter import *
-from config import *
+from config import CH_NAMES, START_TRAIN, N_EVENTS, subjects
 
 # Silence some warnings from lasagne
 import warnings
@@ -67,12 +67,11 @@ else:
 
 
 ###########
-SUBJECTS = list(range(1, 13))
+SUBJECTS = list(subjects)
 TRAIN_SERIES = list(range(1, 5))
 TEST_SERIES = [5]
 
 N_ELECTRODES = 14
-N_EVENTS = 3
 
 SAMPLE_SIZE = delay
 DOWNSAMPLE = 1

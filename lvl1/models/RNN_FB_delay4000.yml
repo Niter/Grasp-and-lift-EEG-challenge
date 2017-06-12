@@ -24,7 +24,7 @@ Training:
   smallEpochs: 2
   majorEpochs: 50
   checkEveryEpochs: 2
-  subsample: 10
+  subsample: 1
 
 Architecture:
   - 'Dropout':

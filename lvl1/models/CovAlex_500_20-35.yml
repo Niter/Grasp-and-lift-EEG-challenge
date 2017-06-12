@@ -20,8 +20,8 @@ imports:
 # Meta variables
 Meta:
   file: 'CovsAlex_20-35Hz_500pts'
-  cores: 6
-  subsample: 10
+  cores: 4
+  subsample: 1
   cachePreprocessed: True
 
 # preprocessing functions receive arguments: X, y(only for train), subject (subject's number)
@@ -29,18 +29,18 @@ Preprocessing:
   - FilterBank:
       filters: [[20, 35]]
   - SlidingWindow:
-      window: 500
+      window: 100
       subsample: subsample
       estimator: _lwf
   - DistanceCalculatorAlex:
       metric_mean: "'logeuclid'"
       metric_dist: "['riemann']"
       subsample: subsample
-      n_jobs: 7
+      n_jobs: 3
 
 PostPreprocessing:
     - DelayPreds:
-        delay: 1000 / subsample
+        delay: 100 / subsample
         skip: 20 / subsample
 
 Models:

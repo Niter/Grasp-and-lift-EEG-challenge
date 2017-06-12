@@ -29,7 +29,7 @@ Preprocessing:
   - FilterBank:
       filters: [[70, 150]]
   - SlidingWindow:
-      window: 500
+      window: 100
       subsample: subsample
       estimator: _lwf
   - DistanceCalculatorAlex:

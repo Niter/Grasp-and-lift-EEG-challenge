@@ -4,5 +4,5 @@ Meta:
 filters: [[5]]
 bags: 10
 
-delay: 4000
-skip: 8
+delay: 200
+skip: 1

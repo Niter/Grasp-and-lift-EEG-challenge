@@ -11,3 +11,4 @@ mne
 nolearn
 progressbar
 pyriemann
+keras==0.1.2
