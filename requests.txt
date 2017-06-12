@@ -11,5 +11,5 @@ mne==0.10
 nolearn==0.6
 matplotlib
 progressbar
-pyriemann==0.2.2
+pyriemann==0.2.3
 keras==0.1.2

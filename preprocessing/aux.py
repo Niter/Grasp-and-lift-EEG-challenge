@@ -14,7 +14,7 @@ from mne import create_info, concatenate_raws, pick_types
 from sklearn.base import BaseEstimator, TransformerMixin
 from glob import glob
 
-from config import CH_NAMES, START_TRAIN
+from eeg_config import CH_NAMES, START_TRAIN
 from read_adapter import get_all_horizon_path_from_the_subject, get_horizo_velocity, get_vertic_velocity
 
 
@@ -207,7 +207,7 @@ class SlidingWindow(BaseEstimator, TransformerMixin):
 
     """Sliding Window tranformer Mixin."""
 
-    def __init__(self, window=500, subsample=10, estimator=np.array):
+    def __init__(self, window=100, subsample=1, estimator=np.array):
         """Init."""
         self.window = window
         self.subsample = subsample

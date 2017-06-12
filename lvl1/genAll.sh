@@ -40,9 +40,11 @@ do
     # Low pass EEG model
     python genPreds.py models/FBL.yml $i &
     python genPreds.py models/FBL_delay.yml $i &
+    wait
 
     # Hybrid model (cov + FBL)
     python genPreds.py models/FBLC_256pts.yml $i python genPreds.py models/FBLCR_256.yml $i &
+    wait
 
     # NN models
     python genPreds_RNN.py models/RNN_FB_delay4000.yml $i

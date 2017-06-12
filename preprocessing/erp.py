@@ -18,11 +18,14 @@ from pyriemann.classification import MDM
 
 from preprocessing.aux import getChannelNames, getEventNames, sliding_window
 
-from config import N_EVENTS
+from copy import deepcopy
+import pdb
+from eeg_config import N_EVENTS
+from pdb_utils import reset_breakpoints, set_breakpoint, _breakpoints
 
 def toMNE(X, y=None):
     """Tranform array into MNE for epoching."""
-    ch_names = getChannelNames()
+    ch_names = deepcopy(getChannelNames())
     montage = read_montage('standard_1005', ch_names)
     ch_type = ['eeg']*len(ch_names)
     data = X.T
@@ -39,7 +42,7 @@ def toMNE(X, y=None):
     return raw
 
 
-def get_epochs_and_cov(X, y, window=500):
+def get_epochs_and_cov(X, y, window=100):
     """return epochs from array."""
     raw_train = toMNE(X, y)
     picks = range(len(getChannelNames()))
@@ -57,12 +60,17 @@ def get_epochs_and_cov(X, y, window=500):
     order_ev = np.argsort(events[:, 0])
     events = events[order_ev]
 
+    # epochs = Epochs(raw_train, events, events_id,
+    #                 tmin=-(window / 500.0) + 1 / 500.0 + 0.150,
+    #                 tmax=0.150, proj=False, picks=picks, baseline=None,
+    #                 preload=True, add_eeg_ref=False, verbose=False)
     epochs = Epochs(raw_train, events, events_id,
-                    tmin=-(window / 500.0) + 1 / 500.0 + 0.150,
+                    tmin=-(window / 128.0) + 1 / 128.0 + 0.150,
                     tmax=0.150, proj=False, picks=picks, baseline=None,
                     preload=True, add_eeg_ref=False, verbose=False)
 
     cov_signal = compute_raw_covariance(raw_train, verbose=False)
+    # pdb.set_trace()
     return epochs, cov_signal
 
 
@@ -83,7 +91,7 @@ class ERP(BaseEstimator, TransformerMixin):
     Brain-Computer Interface Based on Riemannian Geometry", arXiv: 1310.8115.
     """
 
-    def __init__(self, window=500, nfilters=3, subsample=1):
+    def __init__(self, window=100, nfilters=3, subsample=1):
         """Init."""
         self.window = window
         self.nfilters = nfilters
@@ -97,6 +105,8 @@ class ERP(BaseEstimator, TransformerMixin):
     def _fit(self, X, y):
         """fit and return epochs."""
         epochs, cov_signal = get_epochs_and_cov(X, y, self.window)
+        # pdb.set_trace()
+        # TODO: Try to understand what is Xdawn (something that improve SSRN by spatial information?)
 
         xd = Xdawn(n_components=self.nfilters, signal_cov=cov_signal,
                    correct_overlap=False)
@@ -104,10 +114,13 @@ class ERP(BaseEstimator, TransformerMixin):
 
         P = []
         for eid in getEventNames():
+            # set_breakpoint('xd info in getEVetnNames for-lop');
+            # pdb.set_trace()
             P.append(np.dot(xd.filters_[eid][:, 0:self.nfilters].T,
                             xd.evokeds_[eid].data))
         self.P = np.concatenate(P, axis=0)
         self.labels_train = epochs.events[:, -1]
+        # pdb.set_trace()
         return epochs
 
     def transform(self, X, y=None):
@@ -120,7 +133,9 @@ class ERP(BaseEstimator, TransformerMixin):
     def fit_transform(self, X, y):
         """Fit and transform."""
         epochs = self._fit(X, y)
+        # train_cov = np.array([self.erp_cov(ep[:-N_EVENTS, :]) for ep in epochs.get_data()])
         train_cov = np.array([self.erp_cov(ep) for ep in epochs.get_data()])
+        # pdb.set_trace()
         return train_cov
 
     def erp_cov(self, X):
@@ -147,7 +162,7 @@ class ERPDistance(BaseEstimator, TransformerMixin):
     Transactions on Biomedical Engineering, vol. 59, no. 4, p. 920-928, 2012
     """
 
-    def __init__(self, window=500, nfilters=3, subsample=1, metric='riemann',
+    def __init__(self, window=100, nfilters=3, subsample=1, metric='riemann',
                  n_jobs=1):
         """Init."""
         self.window = window
@@ -156,15 +171,18 @@ class ERPDistance(BaseEstimator, TransformerMixin):
         self.metric = metric
         self.n_jobs = n_jobs
         self._fitted = False
+        self.debug_res_cov = False
 
     def fit(self, X, y):
         """fit."""
         # Create ERP and get cov mat
         self.ERP = ERP(self.window, self.nfilters, self.subsample)
+        # pdb.set_trace()
         train_cov = self.ERP.fit_transform(X, y)
         labels_train = self.ERP.labels_train
 
         # Add rest epochs
+        self.debug_res_cov = True
         rest_cov = self._get_rest_cov(X, y)
         train_cov = np.concatenate((train_cov, rest_cov), axis=0)
         labels_train = np.concatenate((labels_train, [0] * len(rest_cov)))
@@ -195,5 +213,8 @@ class ERPDistance(BaseEstimator, TransformerMixin):
         for i in ix:
             start = i + offset - self.window
             stop = i + offset
+            # XY = np.concatenate((X[slice(start, stop)].T, y[slice(start, stop)].T), axis=0)
+            # rest.append(self.ERP.erp_cov(XY))
             rest.append(self.ERP.erp_cov(X[slice(start, stop)].T))
+            # set_breakpoint('get_rest_cov', self.debug_res_cov == True)
         return np.array(rest)
