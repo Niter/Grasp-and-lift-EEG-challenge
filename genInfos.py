@@ -10,7 +10,7 @@ from glob import glob
 from mne import concatenate_raws
 
 from preprocessing.aux import creat_mne_raw_object
-from config import CH_NAMES, subjects
+from eeg_config import CH_NAMES, subjects
 from read_adapter import get_all_horizon_path_from_the_subject
 
 # #### define lists #####

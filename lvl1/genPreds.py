@@ -36,7 +36,7 @@ from preprocessing.aux import getEventNames, load_raw_data
 from multiprocessing import Pool
 
 from read_adapter import subjects_path_list
-from config import subjects
+from eeg_config import subjects
 
 cols = getEventNames()
 

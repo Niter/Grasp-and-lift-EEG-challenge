@@ -15,7 +15,7 @@ from keras.optimizers import SGD, Adam
 from keras.regularizers import l2
 
 
-from config import N_EVENTS
+from eeg_config import N_EVENTS
 
 def buildNN(architecture,training_params,input_dim):
     """Lay out a Neural Network as described in the YAML file."""

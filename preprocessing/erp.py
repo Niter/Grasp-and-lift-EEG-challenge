@@ -18,7 +18,7 @@ from pyriemann.classification import MDM
 
 from preprocessing.aux import getChannelNames, getEventNames, sliding_window
 
-from config import N_EVENTS
+from eeg_config import N_EVENTS
 
 def toMNE(X, y=None):
     """Tranform array into MNE for epoching."""
@@ -107,6 +107,7 @@ class ERP(BaseEstimator, TransformerMixin):
             P.append(np.dot(xd.filters_[eid][:, 0:self.nfilters].T,
                             xd.evokeds_[eid].data))
         self.P = np.concatenate(P, axis=0)
+        print 'self.P:', self.P.shape
         self.labels_train = epochs.events[:, -1]
         return epochs
 

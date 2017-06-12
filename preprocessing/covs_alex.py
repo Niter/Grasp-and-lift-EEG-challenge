@@ -12,7 +12,7 @@ from multiprocessing import Pool
 from functools import partial
 from mne.event import _find_stim_steps
 
-from config import N_EVENTS
+from eeg_config import N_EVENTS
 
 
 def create_sequence(events):

@@ -35,7 +35,7 @@ from mne import concatenate_raws, pick_types
 from preprocessing.aux import creat_mne_raw_object
 from preprocessing.filterBank import FilterBank
 from read_adapter import *
-from config import CH_NAMES, START_TRAIN, N_EVENTS, subjects
+from eeg_config import CH_NAMES, START_TRAIN, N_EVENTS, subjects
 
 # Silence some warnings from lasagne
 import warnings
