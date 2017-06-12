@@ -18,7 +18,7 @@ imports:
 Meta:
   file: 'CovsERP_Dist'
   cores: 16
-  subsample: 10
+  subsample: 1
   subsample_test: 1
   cachePreprocessed: True
 
