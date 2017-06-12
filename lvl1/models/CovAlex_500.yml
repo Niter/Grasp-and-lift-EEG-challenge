@@ -20,7 +20,7 @@ imports:
 # Meta variables
 Meta:
   file: 'CovsAlex_7-30Hz_500pts'
-  cores: 3
+  cores: 16
   subsample: 1
   subsample_test: 1
   cachePreprocessed: True
@@ -37,7 +37,7 @@ Preprocessing:
       metric_mean: "'logeuclid'"
       metric_dist: "['riemann']"
       subsample: subsample
-      n_jobs: 3
+      n_jobs: -1
 
 PostPreprocessing:
     - DelayPreds:

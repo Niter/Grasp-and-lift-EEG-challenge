@@ -16,7 +16,7 @@ imports:
 # Meta variables
 Meta:
   file: 'FBL_delay100_skip20'
-  cores: 4
+  cores: 16
   subsample: 1
   cachePreprocessed: False
 

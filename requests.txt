@@ -9,6 +9,7 @@ pyyaml
 pandas
 mne
 nolearn
+matplotlib
 progressbar
 pyriemann
 keras==0.1.2
