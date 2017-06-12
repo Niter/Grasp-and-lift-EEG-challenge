@@ -27,12 +27,12 @@ def toMNE(X, y=None):
     data = X.T
     if y is not None:
         y = y.transpose()
-        ch_type.extend(['stim']*6)
+        ch_type.extend(['stim']*N_EVENTS)
         event_names = getEventNames()
         ch_names.extend(event_names)
         # concatenate event file and data
         data = np.concatenate((data, y))
-    info = create_info(ch_names, sfreq=500.0, ch_types=ch_type,
+    info = create_info(ch_names, sfreq=128.0, ch_types=ch_type,
                        montage=montage)
     raw = RawArray(data, info, verbose=False)
     return raw
