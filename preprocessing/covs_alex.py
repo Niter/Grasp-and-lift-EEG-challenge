@@ -110,10 +110,10 @@ class DistanceCalculatorRafal(BaseEstimator, TransformerMixin):
         labels = y[::self.subsample]
         pCalcMeans = partial(mean_covariance, metric=self.metric_mean)
         pool = Pool(processes=6)
-        mc1 = pool.map(pCalcMeans, [X[labels[:, i] == 1] for i in range(6)])
+        mc1 = pool.map(pCalcMeans, [X[labels[:, i] == 1] for i in range(N_EVENTS)])
         pool.close()
         pool = Pool(processes=6)
-        mc0 = pool.map(pCalcMeans, [X[labels[:, i] == 0] for i in range(6)])
+        mc0 = pool.map(pCalcMeans, [X[labels[:, i] == 0] for i in range(N_EVENTS)])
         pool.close()
         self.mdm.covmeans = mc1 + mc0
         return self
@@ -126,7 +126,7 @@ class DistanceCalculatorRafal(BaseEstimator, TransformerMixin):
             feat = self.mdm.transform(X)
             print 'feat', feat, feat.shape
             # substract distance of the class 0
-            feat = feat[:, 0:6] - feat[:, 6:]
+            feat = feat[:, 0:N_EVENTS] - feat[:, N_EVENTS:]
             feattr.append(feat)
         feattr = np.concatenate(feattr, axis=1)
         feattr[np.isnan(feattr)] = 0

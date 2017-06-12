@@ -203,6 +203,7 @@ for subject in subjects:
     if cache_preprocessed and (trainPreprocessed is None):
         # if cache activated load file
         cacheFile = '%s/train_sub%d.npy' % (saveFolder, subject)
+        print 'saveing...', cacheFile
         trainPreprocessed = np.load(cacheFile)
 
     # Add preprocessed feature if they have been set in the config file
