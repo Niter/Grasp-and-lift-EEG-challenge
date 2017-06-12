@@ -21,7 +21,7 @@ imports:
 Meta:
   file: 'CovsAlex_70-150Hz_500pts'
   cores: 16
-  subsample: 10
+  subsample: 1
   cachePreprocessed: True
 
 # preprocessing functions receive arguments: X, y(only for train), subject (subject's number)
