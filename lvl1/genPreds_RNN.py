@@ -4,6 +4,7 @@ Created on Wed Jul  8 21:56:55 2015.
 
 @author: rc, alex
 """
+
 import os
 import sys
 if __name__ == '__main__' and __package__ is None:
@@ -23,8 +24,7 @@ from preprocessing.aux import load_raw_data
 from ensembling.NeuralNet import NeuralNet
 
 from config import subjects, CH_NAMES, START_TRAIN, N_EVENTS
-import theano
-theano.config.optimizer = 'None'
+
 # theano.config.exception_verbosity = 'high'
 
 

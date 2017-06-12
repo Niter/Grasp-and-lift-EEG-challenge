@@ -8,35 +8,38 @@ for i in "${array[@]}"
 do
     # generate validation preds
     # cov models
-    python genPreds.py models/CovAlex_500.yml $i
-    python genPreds.py models/CovAlex_500_1-15.yml $i
-    python genPreds.py models/CovAlex_500_20-35.yml $i
-    python genPreds.py models/CovAlex_500_70-150.yml $i
-    python genPreds.py models/CovAlex_250_35Hz.yml $i
-    python genPreds.py models/CovAlex_500_35Hz.yml $i
-    python genPreds.py models/CovERP_dist.yml $i
+    python genPreds.py models/CovAlex_500.yml $i &
+    python genPreds.py models/CovAlex_500_1-15.yml $i &
+    python genPreds.py models/CovAlex_500_20-35.yml $i &
+    python genPreds.py models/CovAlex_500_70-150.yml $i &
+    python genPreds.py models/CovAlex_250_35Hz.yml $i &
+    python genPreds.py models/CovAlex_500_35Hz.yml $i &
+    python genPreds.py models/CovERP_dist.yml $i &
+    wait
     # PolynomialFeatures cov model
-    python genPreds.py models/CovAlex_500_poly.yml $i
-    python genPreds.py models/CovAlex_500_1-15_poly.yml $i
-    python genPreds.py models/CovAlex_500_20-35_poly.yml $i
-    python genPreds.py models/CovAlex_500_70-150_poly.yml $i
-    python genPreds.py models/CovAlex_250_35Hz_poly.yml $i
-    python genPreds.py models/CovAlex_500_35Hz_poly.yml $i
-    python genPreds.py models/CovERP_dist_poly.yml $i
-    # rafal cov model
-    python genPreds.py models/CovRafal_256_35Hz.yml $i
-    python genPreds.py models/CovRafal_500_35Hz.yml $i
+    python genPreds.py models/CovAlex_500_poly.yml $i &
+    python genPreds.py models/CovAlex_500_1-15_poly.yml $i &
+    python genPreds.py models/CovAlex_500_20-35_poly.yml $i &
+    python genPreds.py models/CovAlex_500_70-150_poly.yml $i &
+    python genPreds.py models/CovAlex_250_35Hz_poly.yml $i &
+    python genPreds.py models/CovAlex_500_35Hz_poly.yml $i &
+    python genPreds.py models/CovERP_dist_poly.yml $i &
+    wait
+    # rafal cov model 
+    python genPreds.py models/CovRafal_256_35Hz.yml $i &
+    python genPreds.py models/CovRafal_500_35Hz.yml $i &
+    wait
     # aggregated cov model
-    python genPreds.py models/CovAlex_All.yml $i
-    python genPreds.py models/CovAlex_old_All.yml $i
+    python genPreds.py models/CovAlex_All.yml $i &
+    python genPreds.py models/CovAlex_old_All.yml $i &
+    wait
 
     # Low pass EEG model
-    python genPreds.py models/FBL.yml $i
-    python genPreds.py models/FBL_delay.yml $i
+    python genPreds.py models/FBL.yml $i &
+    python genPreds.py models/FBL_delay.yml $i &
 
     # Hybrid model (cov + FBL)
-    python genPreds.py models/FBLC_256pts.yml $i
-    python genPreds.py models/FBLCR_256.yml $i
+    python genPreds.py models/FBLC_256pts.yml $i python genPreds.py models/FBLCR_256.yml $i &
 
     # NN models
     python genPreds_RNN.py models/RNN_FB_delay4000.yml $i
