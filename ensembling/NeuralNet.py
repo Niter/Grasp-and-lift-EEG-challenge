@@ -106,8 +106,8 @@ class NeuralNet(BaseEstimator,ClassifierMixin):
             # print 'trainData:', trainData.shape
             # print 'targets:', targets.shape
             # print theano.printing.debugprint(self.model)
-            self.model.fit(trainData, targets, nb_epoch=self.smallEpochs, 
-                           batch_size=512,verbose=0,show_accuracy=True)
+            self.model.fit(trainData, targets, epochs=self.smallEpochs, 
+                           batch_size=512,verbose=0)
             
             trainData=None
             

@@ -3,4 +3,5 @@
 python genInfos.py
 cd lvl1
 rm -rf val/*
-python genPreds_RNN.py models/RNN_FB_delay4000.yml val
+/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python genPreds_RNN.py models/RNN_FB_delay4000.yml val
+# THEANO_FLAGS=device=gpu /opt/packages/keras/keras_2.0.4/kerasEnv/bin/python genPreds_CNN_Tim.py models/cnn_script_2D_30Hz.yml val
