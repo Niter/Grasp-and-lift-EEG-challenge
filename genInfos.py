@@ -17,7 +17,6 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('--n_subjects', type=int, action='store', default=2)
 args, unknown = parser.parse_known_args()
-print args.n_subjects
 subjects = range(1, args.n_subjects + 1)
 
 # #### define lists #####

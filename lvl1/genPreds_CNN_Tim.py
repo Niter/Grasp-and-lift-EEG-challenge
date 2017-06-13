@@ -34,7 +34,7 @@ from mne import concatenate_raws, pick_types
 
 from preprocessing.aux import creat_mne_raw_object
 from preprocessing.filterBank import FilterBank
-from read_adapter import *
+rom read_adapter import *
 from eeg_config import CH_NAMES, START_TRAIN, N_EVENTS, subjects
 import argparse
 
@@ -80,8 +80,7 @@ TEST_SERIES = [5]
 N_ELECTRODES = 14
 
 SAMPLE_SIZE = delay
-DOWNSAMPLE = 1
-TIME_POINTS = SAMPLE_SIZE // DOWNSAMPLE
+DOWNSAMPLE = 1 TIME_POINTS = SAMPLE_SIZE // DOWNSAMPLE
 
 # TRAIN_SIZE = 5120
 TRAIN_SIZE = 100
@@ -115,7 +114,8 @@ class Source:
         fnames.sort()
         self.fnames = fnames
         action_1D_type = 'HO'
-        raw_train = [creat_mne_raw_object(fnames[i], i, read_events=action_1D_type) for i in range(len(fnames))]
+        raw_train = [creat_mne_raw_object(fnames[i], i, read_events=action_1D_type) 
+                for i in range(len(fnames))]
         raw_train = concatenate_raws(raw_train)
         # pick eeg signal
         picks = pick_types(raw_train.info, eeg=True)
@@ -268,7 +268,8 @@ def create_net(train_source, test_source, batch_size=128, max_epochs=100,
 
     if filt2Dsize:
         inputLayer = LF(InputLayer, shape=(None, 1, N_ELECTRODES, TIME_POINTS))
-        convLayer = LF(Conv2DLayer, num_filters=8, filter_size=(N_ELECTRODES, filt2Dsize))
+        convLayer = LF(Conv2DLayer, num_filters=8, 
+                filter_size=(N_ELECTRODES, filt2Dsize))
     else:
         inputLayer = LF(InputLayer, shape=(None, N_ELECTRODES, TIME_POINTS))
         convLayer = LF(Conv1DLayer, num_filters=8, filter_size=1)
@@ -349,14 +350,16 @@ if test is False:
             dummy = net.fit(train_indices, train_indices)
             indices = np.arange(START_TRAIN, len(test_source.data))
             probs = net.predict_proba(indices)
-            auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in zip(test_source.events[START_TRAIN:].T[1:, :], probs.T[1:, :])])
+            auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
+                    zip(test_source.events[START_TRAIN:].T[1:, :], probs.T[1:, :])])
             print 'Bag %d, subject %d, AUC: %.5f' % (bag, subject, auc)
             probs_tot.append(probs)
             lbls_tot.append(test_source.events[START_TRAIN:])
     
         probs_tot = np.concatenate(probs_tot)
         lbls_tot = np.concatenate(lbls_tot)
-        auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in zip(lbls_tot.transpose(), probs_tot.transpose())])
+        auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
+                zip(lbls_tot.transpose(), probs_tot.transpose())])
         probs_bags.append(probs_tot)
     
     probs_bags = np.mean(probs_bags, axis=0)
