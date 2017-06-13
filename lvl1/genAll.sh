@@ -50,7 +50,7 @@ do
     wait
 
     # NN models
-    /opt/packages/keras/keras_2.0.4/kerasEnv/bin/python genPreds_RNN.py genPreds_RNN.py models/RNN_FB_delay4000.yml --n_subjects=$n_subjects $i
+    /opt/packages/keras/keras_2.0.4/kerasEnv/bin/python genPreds_RNN.py genPreds_RNN.py models/RNN_FB_delay4000.yml $i --n_subjects=$n_subjects
     # python genPreds_CNN_Tim.py models/cnn_script_2D_30Hz.yml --n_subjects=$n_subjects $i
     # python genPreds_CNN_Tim.py models/cnn_script_2D_30Hz_shorterDelay.yml --n_subjects=$n_subjects $i
     # python genPreds_CNN_Tim.py models/cnn_script_1D_30Hz.yml --n_subjects=$n_subjects $i
