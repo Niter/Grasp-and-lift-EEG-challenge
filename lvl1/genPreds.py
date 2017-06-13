@@ -37,6 +37,12 @@ from multiprocessing import Pool
 
 from read_adapter import subjects_path_list
 from eeg_config import subjects
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--n_subjects', type=int, action='store', default=2)
+args, unknown = parser.parse_known_args()
+subjects = range(1, args.n_subjects + 1)
 
 cols = getEventNames()
 

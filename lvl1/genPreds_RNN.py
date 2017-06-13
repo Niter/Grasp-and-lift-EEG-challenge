@@ -23,11 +23,13 @@ from sklearn.pipeline import make_pipeline
 from preprocessing.aux import load_raw_data
 from ensembling.NeuralNet import NeuralNet
 
-from eeg_config import subjects, CH_NAMES, START_TRAIN, N_EVENTS
-import theano
-theano.config.optimizer = 'None'
-# theano.config.exception_verbosity = 'high'
+from eeg_config import CH_NAMES, START_TRAIN, N_EVENTS
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--n_subjects', type=int, action='store', default=2)
+args, unknown = parser.parse_known_args()
+subjects = range(1, args.n_subjects + 1)
 
 def _from_yaml_to_func(method, params):
     """go from yaml to method.

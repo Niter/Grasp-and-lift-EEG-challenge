@@ -10,8 +10,15 @@ from glob import glob
 from mne import concatenate_raws
 
 from preprocessing.aux import creat_mne_raw_object
-from eeg_config import CH_NAMES, subjects
+from eeg_config import CH_NAMES
 from read_adapter import get_all_horizon_path_from_the_subject
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--n_subjects', type=int, action='store', default=2)
+args, unknown = parser.parse_known_args()
+print args.n_subjects
+subjects = range(1, args.n_subjects + 1)
 
 # #### define lists #####
 

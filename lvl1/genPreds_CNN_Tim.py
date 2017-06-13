@@ -36,6 +36,12 @@ from preprocessing.aux import creat_mne_raw_object
 from preprocessing.filterBank import FilterBank
 from read_adapter import *
 from eeg_config import CH_NAMES, START_TRAIN, N_EVENTS, subjects
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--n_subjects', type=int, action='store', default=2)
+args, unknown = parser.parse_known_args()
+subjects = range(1, args.n_subjects + 1)
 
 # Silence some warnings from lasagne
 import warnings
