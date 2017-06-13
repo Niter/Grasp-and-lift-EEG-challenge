@@ -23,14 +23,9 @@ from sklearn.pipeline import make_pipeline
 from preprocessing.aux import load_raw_data
 from ensembling.NeuralNet import NeuralNet
 
-<<<<<<< HEAD
-from config import subjects, CH_NAMES, START_TRAIN, N_EVENTS
-
-=======
 from eeg_config import subjects, CH_NAMES, START_TRAIN, N_EVENTS
 import theano
 theano.config.optimizer = 'None'
->>>>>>> fbd620c6ef0e2f5b4c64d627727af0d85530b9d8
 # theano.config.exception_verbosity = 'high'
 
 

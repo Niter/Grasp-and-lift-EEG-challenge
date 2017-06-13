@@ -3,7 +3,9 @@ array=( val )
 cd ..
 python genInfos.py
 cd lvl1
-rm -rf val/*
+cd val
+find . -type f -not -name 'placeholder' -print0 | xargs -0 rm --
+cd ..
 cd report
 find . -type f -not -name 'placeholder' -print0 | xargs -0 rm --
 cd ..
