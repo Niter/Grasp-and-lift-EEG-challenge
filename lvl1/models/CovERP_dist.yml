@@ -27,7 +27,7 @@ Preprocessing:
   - FilterBank:
       filters: [[1, 20]]
   - ERPDistance:
-      window: 100
+      window: 128
       subsample: subsample
       nfilters: 3
       metric: "'riemann'"
@@ -35,8 +35,8 @@ Preprocessing:
 
 PostPreprocessing:
     - DelayPreds:
-        delay: 100 / subsample
-        skip: 20 / subsample
+        delay: 256 / subsample
+        skip: 10 / subsample
 
 Models:
   - '("lda",LDA())'

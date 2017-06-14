@@ -31,7 +31,7 @@ Preprocessing:
   - FilterBank:
       filters: [[35]]
   - SlidingWindow:
-      window: 256
+      window: 128
       subsample: subsample
       estimator: _lwf
   - DistanceCalculatorRafal:
@@ -42,8 +42,8 @@ Preprocessing:
 
 PostPreprocessing:
     - DelayPreds:
-        delay: 100 / subsample
-        skip: 20 / subsample
+        delay: 256 / subsample
+        skip: 10 / subsample
 
 Models:
   #- '("lda",LDA())'

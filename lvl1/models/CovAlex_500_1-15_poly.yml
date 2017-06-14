@@ -29,7 +29,7 @@ PostPreprocessing:
     - PolynomialFeatures:
        degree: 2
     - DelayPreds:
-        delay: 100 / subsample
+        delay: 256 / subsample
         skip: 10 / subsample
 
 Models:

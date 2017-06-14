@@ -29,8 +29,8 @@ PostPreprocessing:
     - PolynomialFeatures:
        degree: 2
     - DelayPreds:
-        delay: 1000 / subsample
-        skip: 50 / subsample
+        delay: 256 / subsample
+        skip: 10 / subsample
 
 Models:
   - '("lr",LogisticRegression())'
