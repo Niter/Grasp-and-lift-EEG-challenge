@@ -34,7 +34,8 @@ from mne import concatenate_raws, pick_types
 
 from preprocessing.aux import creat_mne_raw_object
 from preprocessing.filterBank import FilterBank
-rom read_adapter import *
+from read_adapter import *
+import pdb
 from eeg_config import CH_NAMES, START_TRAIN, N_EVENTS, subjects
 import argparse
 
@@ -80,7 +81,8 @@ TEST_SERIES = [5]
 N_ELECTRODES = 14
 
 SAMPLE_SIZE = delay
-DOWNSAMPLE = 1 TIME_POINTS = SAMPLE_SIZE // DOWNSAMPLE
+DOWNSAMPLE = 1
+TIME_POINTS = SAMPLE_SIZE // DOWNSAMPLE
 
 # TRAIN_SIZE = 5120
 TRAIN_SIZE = 100
@@ -246,6 +248,7 @@ class IndexBatchIterator(BatchIterator):
             if y_indices is not None:
                 Y[i] = self.source.events[ndx]
         Y = None if (y_indices is None) else Y
+        pdb.set_trace()
 
         return X, Y
 
