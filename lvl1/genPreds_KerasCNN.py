@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 """
 Created on Thu Jul 30 21:28:32 2015.
 
@@ -6,6 +7,7 @@ Script written by Tim Hochberg with parameter tweaks by Bluefool.
 https://www.kaggle.com/bitsofbits/grasp-and-lift-eeg-detection/naive-nnet 
 Modifications: rc, alex
 """
+
 import os
 import sys
 # if __name__ == '__main__' and __package__ is None:
@@ -29,7 +31,7 @@ import keras.backend as K
 from preprocessing.aux import creat_mne_raw_object
 from preprocessing.filterBank import FilterBank
 from read_adapter import *
-from eeg_config import CH_NAMES, START_TRAIN, N_EVENTS, subjects
+from eeg_config import CH_NAMES, N_EVENTS, subjects
 import argparse
 import pdb
 
@@ -71,6 +73,8 @@ SAMPLE_SIZE = delay
 DOWNSAMPLE = 1
 TIME_POINTS = SAMPLE_SIZE // DOWNSAMPLE
 
+START_TRAIN = delay
+
 TRAIN_SIZE = 5120
 # TRAIN_SIZE = 100
 
@@ -81,6 +85,16 @@ def preprocessData(data):
     fb = FilterBank(filters)
     return fb.transform(data)
 
+def one_hot_to_val(vec):
+    n = vec.shape[0]
+    return np.argmax(vec, axis=1)
+    
+def val_to_one_hot(vec, n_classes):
+    n = vec.shape[0]
+    res = np.zeros((n, n_classes))
+    res[np.arange(n), vec] = 1
+    return res
+
 class Source:
 
     """Loads, preprocesses and holds data."""
@@ -89,7 +103,11 @@ class Source:
     std = None
 
     def load_raw_data(self, subject, series):
-        """Load data for a subject / series."""
+        """
+        Load data for a subject / series.
+        n_points: int. The number of timepoints that can be predict/train. 
+        Because the timepoints in the start are not valid for windows or there are no velocity.
+        """
         # test = series == TEST_SERIES
         test = False
         if not test:
@@ -110,6 +128,7 @@ class Source:
         self.data = raw_train._data[picks].transpose()
 
         self.data = preprocessData(self.data)
+        self.n_points = self.data.shape[0] - START_TRAIN
 
         if not test:
             self.events = raw_train._data[14:].transpose()
@@ -188,16 +207,16 @@ class Iterator(object):
                 np.random.seed(seed + self.total_batches_seen)
             # The first few index shouldn't be counted because it doesn't have enough timepoints to construct a window
             if self.batch_index == 0:
-                index_array = np.arange(n-START_TRAIN) + START_TRAIN
+                index_array = np.arange(n - START_TRAIN) + START_TRAIN
                 if shuffle:
                     index_array = np.random.permutation(n-START_TRAIN) + START_TRAIN
 
-            current_index = (self.batch_index * batch_size) % n
-            if n > current_index + batch_size:
+            current_index = (self.batch_index * batch_size) % (n - START_TRAIN)
+            if (n - START_TRAIN) > current_index + batch_size:
                 current_batch_size = batch_size
                 self.batch_index += 1
             else:
-                current_batch_size = n - current_index
+                current_batch_size = (n - START_TRAIN) - current_index
                 self.batch_index = 0
             self.total_batches_seen += 1
             yield (index_array[current_index: current_index + current_batch_size],
@@ -226,13 +245,12 @@ class NumpyArrayIterator(Iterator):
 
     def __init__(self, x, y, source,
                  batch_size=32, shuffle=False, seed=None):
-        '''
+
         if y is not None and len(x) != len(y):
             raise ValueError('X (images tensor) and y (labels) '
                              'should have the same length. '
                              'Found: X.shape = %s, y.shape = %s' %
                              (np.asarray(x).shape, np.asarray(y).shape))
-        '''
 
         self.x = np.asarray(x, dtype=K.floatx())
 
@@ -278,13 +296,16 @@ class NumpyArrayIterator(Iterator):
         if self.y is None:
             return batch_x
 
-        '''
-        batch_y = self.y[index_array]
-        '''
-        batch_y = []
-        for i in range(len(self.y)):
-            batch_y.append(self.y[i][index_array])
+        if self.y is None:
+            return batch_x
+        elif type(self.y) is list:
+            batch_y = []
+            for i in range(len(self.y)):
+                batch_y.append(self.y[i][index_array])
+        else:
+            batch_y = self.y[index_array]
 
+        # pdb.set_trace()
         return batch_x, batch_y
 
 ### End DataGenerator for Keras
@@ -303,7 +324,7 @@ from keras.layers.normalization import BatchNormalization
 
 def create_net():
 
-    dense = 1024  # larger (1024 perhaps) would be better
+    dense = 512  # larger (1024 perhaps) would be better
     if filt2Dsize:
         input_shape=(N_ELECTRODES, SAMPLE_SIZE, 1)
         conv_layer = Conv2D(8, (N_ELECTRODES, filt2Dsize), name='conv2d_1')
@@ -316,9 +337,9 @@ def create_net():
     model.add(conv_layer)
     model.add(Flatten())
     model.add(Dense(dense, activation='relu', name='fc1'))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.7))
     model.add(Dense(dense, activation='relu', name='fc2'))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.7))
     model.add(Dense(N_EVENTS, activation='softmax', name='output'))
     
     optimizer = keras.optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=1e-08)
@@ -353,14 +374,14 @@ for bag in range(bags):
         # pdb.set_trace()
         model = create_net()
         model.fit_generator(train_source.flow(batch_size=BATCH_SIZE, shuffle=True),
-                steps_per_epoch=train_source.data.shape[0]//BATCH_SIZE,
+                steps_per_epoch=train_source.n_points//BATCH_SIZE - 4,
                 epochs=max_epochs,
                 validation_data=test_source.flow(batch_size=BATCH_SIZE, shuffle=True),
                 validation_steps=100,
             )
         probs_val = model.predict_generator(
                 test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
-                (test_source.data.shape[0]-1)//BATCH_SIZE + 1,
+                (test_source.n_points-1)//BATCH_SIZE + 1,
             )
 
         # Transform to one hot
