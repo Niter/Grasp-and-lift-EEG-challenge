@@ -23,7 +23,7 @@ from sklearn.pipeline import make_pipeline
 from preprocessing.aux import load_raw_data
 from ensembling.NeuralNet import NeuralNet
 
-from eeg_config import CH_NAMES, START_TRAIN, N_EVENTS
+from eeg_config import CH_NAMES, N_EVENTS
 import argparse
 
 parser = argparse.ArgumentParser()
