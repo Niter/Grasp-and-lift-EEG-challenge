@@ -363,8 +363,7 @@ max_epochs = 5
 
 probs_bags = []
 all_auc = []
-# for bag in range(bags):
-for bag in range(1):
+for bag in range(bags):
     probs_tot = []
     lbls_tot = []
     for subject in subjects:
@@ -386,7 +385,6 @@ for bag in range(1):
                 (test_source.n_points-1)//BATCH_SIZE + 1,
             )
 
-        print probs.shape
         # Transform to one hot
         # probs = np.zeros((probs_val.shape[0], N_EVENTS))
         # probs = np.array[np.arange(probs.shape[0], probs_val)] = 1
