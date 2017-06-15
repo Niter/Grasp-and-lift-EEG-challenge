@@ -1,0 +1,23 @@
+#!/bin/bash
+# To run the CNN model training on the GPU Partition
+#SBATCH -N 1
+#SBATCH -p GPU
+#SBATCH --gres=gpu:p100:1
+#SBATCH -t 1:00:00
+# echo commands to stdout
+set -x
+
+# move to working directory
+cd /home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
+
+# load the module
+module unload python
+module load tensorflow/1.1.0
+module load keras
+
+n_subjects=2
+python genInfos.py --n_subjects $n_subjects
+cd lvl1
+rm -rf val/*
+# /opt/packages/keras/keras_2.0.4/kerasEnv/bin/python genPreds_RNN.py models/RNN_FB_delay4000.yml val --n_subjects=$n_subjects
+/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python genPreds_KerasCNN.py models/cnn_script_2D_30Hz.yml val --n_subjects=$n_subjects

@@ -14,7 +14,7 @@ from mne import create_info, concatenate_raws, pick_types
 from sklearn.base import BaseEstimator, TransformerMixin
 from glob import glob
 
-from eeg_config import CH_NAMES, START_TRAIN
+from eeg_config import CH_NAMES
 from read_adapter import get_all_horizon_path_from_the_subject, get_horizo_velocity, get_vertic_velocity
 
 

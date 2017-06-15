@@ -359,10 +359,12 @@ np.random.seed(67534)
 
 BATCH_SIZE = 512
 valid_series = [5]
-max_epochs = 100
+max_epochs = 5
 
 probs_bags = []
-for bag in range(bags):
+all_auc = []
+# for bag in range(bags):
+for bag in range(1):
     probs_tot = []
     lbls_tot = []
     for subject in subjects:
@@ -379,16 +381,18 @@ for bag in range(bags):
                 validation_data=test_source.flow(batch_size=BATCH_SIZE, shuffle=True),
                 validation_steps=100,
             )
-        probs_val = model.predict_generator(
+        probs = model.predict_generator(
                 test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
                 (test_source.n_points-1)//BATCH_SIZE + 1,
             )
 
+        print probs.shape
         # Transform to one hot
-        probs = np.zeros((probs_val.shape[0], N_EVENTS))
-        probs = np.array[np.arange(probs.shape[0], probs_val)] = 1
+        # probs = np.zeros((probs_val.shape[0], N_EVENTS))
+        # probs = np.array[np.arange(probs.shape[0], probs_val)] = 1
         auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
-                zip(test_source.events[:, START_TRAIN:].T, probs.T)])
+                zip(test_source.events[START_TRAIN:, :].T, probs.T)])
+        # pdb.set_trace()
         print 'Bag %d, subject %d, AUC: %.5f' % (bag, subject, auc)
         probs_tot.append(probs)
         lbls_tot.append(test_source.events[START_TRAIN:])
@@ -397,14 +401,15 @@ for bag in range(bags):
     lbls_tot = np.concatenate(lbls_tot)
     auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
             zip(lbls_tot.transpose(), probs_tot.transpose())])
+    all_auc.append(auc)
     probs_bags.append(probs_tot)
 
 probs_bags = np.mean(probs_bags, axis=0)
 np.save('val/val_%s.npy' % fileName, [probs_bags])
 
-
 prefix = 'test_' if test else 'val_'
 end_time = time()
 report['Time'] = end_time - start_time
+report['AUC'] = np.mean(all_auc)
 report.to_csv("report/%s_%s.csv" % (prefix, fileName))
 print report
