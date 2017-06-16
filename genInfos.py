@@ -9,6 +9,7 @@ import pandas as pd
 from glob import glob
 from mne import concatenate_raws
 
+import pdb
 from preprocessing.aux import creat_mne_raw_object
 from eeg_config import CH_NAMES
 from read_adapter import get_all_horizon_path_from_the_subject
@@ -38,21 +39,24 @@ for subject in subjects:
     fnames.sort()
     fnames_val = fnames[2:4]
 
-    fnames_test = fnames[4]
+    fnames_test = fnames[-1:]
     # fnames_test = glob('data/test/subj%d_series*_data.csv' % (subject))
     # fnames_test.sort()
 
+    # Note that the 2nd args of creat_mne_raw_object is zero-based
     action_1D_type = 'HO'
-    raw_val = concatenate_raws([creat_mne_raw_object(fnames[i], i, read_events=action_1D_type) for i in range(len(fnames_val))])
-    raw_test = concatenate_raws([creat_mne_raw_object(fname, read_events=False) for fname in fnames_test])
+    raw_val = concatenate_raws([creat_mne_raw_object(fname, 2+i, read_events=action_1D_type) 
+            for i, fname in enumerate(fnames_val)])
+    raw_test = concatenate_raws([creat_mne_raw_object(fname, 4+i, read_events=action_1D_type) 
+            for i, fname in enumerate(fnames_test)])
 
     # extract labels for series 7&8
     labels = raw_val._data[len(CH_NAMES):]
     lbls_tot.append(labels.transpose())
 
     # aggregate infos for validation (series 7&8)
-    raw_series3 = creat_mne_raw_object(fnames_val[0], 3, action_1D_type)
-    raw_series4 = creat_mne_raw_object(fnames_val[0], 4, action_1D_type)
+    raw_series3 = creat_mne_raw_object(fnames_val[0], 2, action_1D_type)
+    raw_series4 = creat_mne_raw_object(fnames_val[1], 3, action_1D_type)
     series = np.array([3] * raw_series3.n_times + [4] * raw_series4.n_times)
     series_val_tot.append(series)
 
@@ -60,10 +64,11 @@ for subject in subjects:
     subjects_val_tot.append(subjs)
 
     # aggregate infos for test (series 9&10)
-    ids = np.concatenate([np.array(pd.read_csv(fname)['id']) for fname in fnames_test])
-    ids_tot.append(ids)
-    raw_series5 = creat_mne_raw_object(fnames_test[0], read_events=False)
+    # ids are the name/idx of the timepoints
+    raw_series5 = creat_mne_raw_object(fnames_test[0], 4, read_events=action_1D_type)
     series = np.array([5] * raw_series5.n_times)
+    ids = np.concatenate([np.arange(raw_series5.n_times) for fname in fnames_test])
+    ids_tot.append(ids)
     series_test_tot.append(series)
 
     subjs = np.array([subject]*raw_test.n_times)

@@ -14,6 +14,7 @@ from mne import create_info, concatenate_raws, pick_types
 from sklearn.base import BaseEstimator, TransformerMixin
 from glob import glob
 
+import pdb
 from eeg_config import CH_NAMES
 from read_adapter import get_all_horizon_path_from_the_subject, get_horizo_velocity, get_vertic_velocity
 
@@ -49,9 +50,11 @@ def load_raw_data(subject, test=False):
     if test:
         fnames_test = fnames_train[-1:]
         fnames_train = fnames_train[:-1]
+        test_idx_offset = 4
     else:
         fnames_test = fnames_train[2:4]
         fnames_train = fnames_train[:2]
+        test_idx_offset = 2
 
     # read and concatenate all the files
     action_1D_type = 'HO'
@@ -64,7 +67,8 @@ def load_raw_data(subject, test=False):
     data_train = raw_train._data[picks].T
     labels_train = raw_train._data[len(CH_NAMES):].T
 
-    raw_test = [creat_mne_raw_object(fname, i, read_events=action_1D_type) for i, fname in enumerate(fnames_test)]
+    raw_test = [creat_mne_raw_object(fname, test_idx_offset + i, read_events=action_1D_type) 
+            for i, fname in enumerate(fnames_test)]
     raw_test = concatenate_raws(raw_test)
     data_test = raw_test._data[picks].T
 
@@ -77,7 +81,11 @@ def load_raw_data(subject, test=False):
 
 
 def creat_mne_raw_object(fname, idx_subject, read_events='HO'):
-    """Create a mne raw instance from csv file."""
+    """
+    Create a mne raw instance from csv file.
+
+    idx_subject is zero-based index
+    """
     # Read EEG file
     # data = pd.read_csv(fname)
     data = np.loadtxt(fname, delimiter=',')

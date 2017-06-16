@@ -90,8 +90,7 @@ else:
 
 if 'addPreprocessed' in yml['Meta']:
     addPreprocessed = yml['Meta']['addPreprocessed']
-else:
-    addPreprocessed = []
+else: addPreprocessed = []
 
 # preprocessing pipeline
 pipe = []
@@ -178,7 +177,7 @@ for subject in subjects:
     else:
         # if not, do preprocessing
         trainPreprocessed = preprocess.fit_transform(data_train, labels_train)
-        # print 'have trainPreprocessed'
+        # print 'have rainPreprocessed'
         # print 'trainPreprocessed:', trainPreprocessed
         # if cache activated but no file, save
         if cache_preprocessed:

@@ -85,15 +85,15 @@ def preprocessData(data):
     fb = FilterBank(filters)
     return fb.transform(data)
 
-def one_hot_to_val(vec):
-    n = vec.shape[0]
-    return np.argmax(vec, axis=1)
-    
-def val_to_one_hot(vec, n_classes):
-    n = vec.shape[0]
-    res = np.zeros((n, n_classes))
-    res[np.arange(n), vec] = 1
-    return res
+# def one_hot_to_val(vec):
+#     n = vec.shape[0]
+#     return np.argmax(vec, axis=1)
+#     
+# def val_to_one_hot(vec, n_classes):
+#     n = vec.shape[0]
+#     res = np.zeros((n, n_classes))
+#     res[np.arange(n), vec] = 1
+#     return res
 
 class Source:
 
@@ -361,7 +361,7 @@ np.random.seed(67534)
 
 BATCH_SIZE = 512
 valid_series = [3, 4]
-max_epochs = 50
+max_epochs = 30
 
 all_auc = []
 if test is False:
@@ -403,7 +403,6 @@ if test is False:
         lbls_tot = np.concatenate(lbls_tot)
         auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
                 zip(lbls_tot.transpose(), probs_tot.transpose())])
-        print auc
         all_auc.append(auc)
         probs_bags.append(probs_tot)
 
@@ -427,6 +426,10 @@ else:
                     epochs=max_epochs,
                     validation_data=test_source.flow(batch_size=2048, shuffle=True),
                     validation_steps=3,
+                )
+            probs = model.predict_generator(
+                    test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
+                    (test_source.n_points-1)//BATCH_SIZE + 1,
                 )
 
             print 'Bag %d, subject %d' % (bag, subject)
