@@ -31,7 +31,7 @@ Preprocessing:
   - FilterBank:
       filters: [[35]]
   - SlidingWindow:
-      window: 512
+      window: 128
       subsample: subsample
       estimator: _lwf
   - DistanceCalculatorAlex:

@@ -46,11 +46,10 @@ Model:
     checkEveryEpochs: 1
 
     architecture:
-      - 'Dropout':
-            p: 0.5
       - 'GRU':
             num_units: 256
             next_GRU: False
+            dropout: 0.5
       - 'Dense':
             num_units: 256
       - 'Activation':

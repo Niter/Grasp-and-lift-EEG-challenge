@@ -154,7 +154,7 @@ class Source:
         n = self.data.shape[0]
         self.y = self.events
         if filt2Dsize:
-            input_shape = [self.n_points, N_ELECTRODES, TIME_POINTS, 1]
+            input_shape = [self.n_points, 1, N_ELECTRODES, TIME_POINTS]
         else:
             input_shape = [self.n_points, N_ELECTRODES, TIME_POINTS]
         batch_x = np.zeros(input_shape, dtype=K.floatx())

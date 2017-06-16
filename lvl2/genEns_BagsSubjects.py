@@ -10,6 +10,7 @@ if __name__ == '__main__' and __package__ is None:
     filePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.append(filePath)
 
+import pdb
 import numpy as np
 import yaml
 from copy import deepcopy
@@ -23,6 +24,14 @@ from utils.ensembles import createEnsFunc, loadPredictions, getLvl1ModelList
 from ensembling.WeightedMean import WeightedMeanClassifier
 from ensembling.NeuralNet import NeuralNet
 from ensembling.XGB import XGB
+
+from eeg_config import N_EVENTS
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--n_subjects', type=int, action='store', default=2)
+args, unknown = parser.parse_known_args()
+arg_allsubjects = range(1, args.n_subjects + 1)
 
 # To ignore the warning that: missing __init__.py
 # import warnings
@@ -108,7 +117,7 @@ if test:
     for k in range(nbags):
         print("Train Bag #%d/%d" % (k+1, nbags))
         model = deepcopy(model_base)
-        allsubjects = np.arange(1,13)
+        allsubjects = deepcopy(arg_allsubjects)
         np.random.shuffle(allsubjects)
         ix_subjects = np.sum([subjects==s for s in allsubjects[0:bagsize]], axis=0) != 0
         
@@ -128,7 +137,7 @@ if test:
         dataTest = np.c_[dataTest, subjects_test]
 
     # get predictions
-    p = np.zeros((len(ids),6))
+    p = np.zeros((len(ids), N_EVETS))
     for k in range(nbags):
         print("Test Bag #%d" % (k+1))
         model = all_models.pop(0)
@@ -141,7 +150,7 @@ else:
     for fold, (train, test) in enumerate(cv):
         for k in range(nbags):
             print("Train Bag #%d/%d" % (k+1, nbags))
-            allsubjects = np.arange(1,13)
+            allsubjects = deepcopy(arg_allsubjects)
             np.random.shuffle(allsubjects)
             ix_subjects = np.sum([subjects[train]==s for s in allsubjects[0:bagsize]], axis=0) != 0
             model = deepcopy(model_base)

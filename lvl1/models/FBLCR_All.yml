@@ -28,8 +28,8 @@ Meta:
       - 'CovsAlex_1-15Hz_500pts'
       - 'CovsAlex_7-30Hz_500pts'
       - 'CovsAlex_20-35Hz_500pts'
-      - 'CovsAlex_70-150Hz_500pts'
       - 'CovsERP_Dist'
+        #- 'CovsAlex_70-150Hz_500pts'
 
 # preprocessing functions receive arguments: X, y(only for train)
 Preprocessing:

@@ -63,12 +63,12 @@ def getLvl1ModelList():
 
             ['RNN_FB_delay4000', ['RNN_FB_delay4000']],
 
-            ['cnn_script_1D_30Hz', ['CNN_1D_FB30']],
-            ['cnn_script_1D_7-30Hz', ['CNN_1D_FB7-30']],
-            ['cnn_script_1D_5Hz', ['CNN_1D_FB5']],
-            ['cnn_script_2D_30Hz', ['CNN_2D_FB30']],
+            # ['cnn_script_1D_30Hz', ['CNN_1D_FB30']],
+            # ['cnn_script_1D_7-30Hz', ['CNN_1D_FB7-30']],
+            # ['cnn_script_1D_5Hz', ['CNN_1D_FB5']],
+            # ['cnn_script_2D_30Hz', ['CNN_2D_FB30']],
 
-            ['cnn_script_1D_30Hz_shorterDelay', ['CNN_1D_FB30_shorterDelay']],
-            ['cnn_script_2D_30Hz_shorterDelay', ['CNN_2D_FB30_shorterDelay']],
+            # ['cnn_script_1D_30Hz_shorterDelay', ['CNN_1D_FB30_shorterDelay']],
+            # ['cnn_script_2D_30Hz_shorterDelay', ['CNN_2D_FB30_shorterDelay']],
             ]
     return files

@@ -5,7 +5,7 @@ module unload python
 module load tensorflow/1.1.0
 module load keras
 
-n_subjects=4
+n_subjects=10
 gpu_python=/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python
 
 cd /home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge/

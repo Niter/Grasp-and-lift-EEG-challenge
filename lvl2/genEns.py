@@ -127,7 +127,6 @@ else:
         model = deepcopy(model_base)
         if modelName == 'NeuralNet':
             # passing also test data to print out test error during training
-            pdb.set_trace()
             model.fit(dataTrain[train], labels[train], dataTrain[test],
                       labels[test])
         else:

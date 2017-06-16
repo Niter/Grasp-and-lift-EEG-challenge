@@ -19,10 +19,10 @@ Model:
                 'ERPDist', 
                 'CAll_old_LR',
                 
-                'CNN_1D_FB30',
-                'CNN_2D_FB30', 
-                'CNN_1D_FB7-30',
-                'CNN_1D_FB5',
+                # 'CNN_1D_FB30',
+                # 'CNN_2D_FB30', 
+                # 'CNN_1D_FB7-30',
+                # 'CNN_1D_FB5',
                 
                 'RNN_FB_delay4000',
                 

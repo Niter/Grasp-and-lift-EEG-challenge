@@ -5,6 +5,7 @@ Created on Thu Aug 13 22:19:12 2015
 @author: rc, alex
 """
 
+import pdb
 from keras.models import Sequential
 from keras.layers.core import Dense, Dropout, Activation, Flatten
 from keras.layers.convolutional import Conv2D
