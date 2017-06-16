@@ -16,7 +16,7 @@ Model:
                 'C500_[1_15]_LR', 
                 'C500_[7_30]_LR',
                 'C500_[20_35]_LR',
-                'C500_[70_150]_LR', 
+                # 'C500_[70_150]_LR', 
                 'C250_[35]_LR',
                 'C500_[35]_LR', 
                 'ERPDist', 
@@ -24,10 +24,10 @@ Model:
                 
                 'CovsRafal_35Hz_256', 'CovsRafal_35Hz_500',
                 
-                'CNN_1D_FB30',
-                'CNN_2D_FB30', 
-                'CNN_1D_FB7-30',
-                'CNN_1D_FB5',
+                # 'CNN_1D_FB30',
+                # 'CNN_2D_FB30', 
+                # 'CNN_1D_FB7-30',
+                # 'CNN_1D_FB5',
                 
                 'RNN_FB_delay4000',
                 ]

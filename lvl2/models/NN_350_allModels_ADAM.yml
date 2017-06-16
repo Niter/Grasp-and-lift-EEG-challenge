@@ -15,7 +15,7 @@ Model:
                 'C500_[1_15]_LR', 'C500_[1_15]_LDA', 
                 'C500_[7_30]_LR', 'C500_[7_30]_LDA',
                 'C500_[20_35]_LR', 'C500_[20_35]_LDA',
-                'C500_[70_150]_LR', 'C500_[70_150]_LDA',
+                # 'C500_[70_150]_LR', 'C500_[70_150]_LDA',
                 'C250_[35]_LR', 'C250_[35]_LDA',
                 'C500_[35]_LR', 'C500_[35]_LDA',
                 'ERPDist', 'ERPDist_LDA',
@@ -31,13 +31,13 @@ Model:
                 'C500_[35]_poly_LR',
                 'ERPDist_poly',
                 
-                'CNN_1D_FB30',
-                'CNN_2D_FB30', 
-                'CNN_1D_FB7-30',
-                'CNN_1D_FB5',
+                # 'CNN_1D_FB30',
+                # 'CNN_2D_FB30', 
+                # 'CNN_1D_FB7-30',
+                # 'CNN_1D_FB5',
                 
-                'CNN_2D_FB30_shorterDelay',
-                'CNN_1D_FB30_shorterDelay',
+                # 'CNN_2D_FB30_shorterDelay',
+                # 'CNN_1D_FB30_shorterDelay',
                 
                 'RNN_FB_delay4000',
                 ]
