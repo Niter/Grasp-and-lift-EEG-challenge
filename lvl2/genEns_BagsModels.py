@@ -6,6 +6,7 @@ Created on Sat Aug 15 14:12:12 2015
 """
 import os
 import sys
+from time import time
 if __name__ == '__main__' and __package__ is None:
     filePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.append(filePath)
@@ -23,6 +24,8 @@ from utils.ensembles import createEnsFunc, loadPredictions, getLvl1ModelList
 from ensembling.WeightedMean import WeightedMeanClassifier
 from ensembling.NeuralNet import NeuralNet
 from ensembling.XGB import XGB
+
+from eeg_config import N_EVENTS
 
 def _from_yaml_to_func(method, params):
     """go from yaml to method.
@@ -99,6 +102,9 @@ if addSubjectID:
 
 np.random.seed(seed)
 
+report = pd.DataFrame(index=[fileName])
+start = start_time()
+
 auc_tot = []
 p = np.zeros(labels.shape)
 cv = LeaveOneLabelOut(series)
@@ -115,7 +121,7 @@ for fold, (train, test) in enumerate(cv):
         
         model.ensemble = list(np.array(ensemble)[np.where(selected_model)[0]])
         
-        selected_model = np.repeat(selected_model,6)
+        selected_model = np.repeat(selected_model,N_EVENTS)
         allbags.append(selected_model)
         model.mdlNr = k
         if modelName == 'NeuralNet':
@@ -128,5 +134,9 @@ for fold, (train, test) in enumerate(cv):
         print np.mean(auc)
     auc_tot.append(np.mean(auc))
     print('Fold %d, score: %.5f' % (fold, auc_tot[-1]))
+end_time = time()
+report['Time'] = end_time - start_time
 print('AUC: %.5f' % np.mean(auc_tot))
+report['AUC'] = np.mean(auc_tot)
+report.to_csv("report/%s_%s.csv" % (prefix, fileName))
 np.save('val/val_%s.npy' % fileName, [p])

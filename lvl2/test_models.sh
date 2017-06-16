@@ -14,7 +14,7 @@ filename="models/RNN_256_customDelay_allModels_ADAM_bags_model.yml"
 echo "$filename"
 if [[ "$filename" == *"bags_model"* ]]
 then
-    $keras_python -m pdb genEns_BagsModels.py $filename val
+    $keras_python genEns_BagsModels.py $filename val
 elif [[ "$filename" == *"bags"* ]]
 then
     # python genEns_BagsSubjects.py $filename $i

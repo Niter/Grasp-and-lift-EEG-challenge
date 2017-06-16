@@ -132,6 +132,8 @@ class Source:
 
         if not test:
             self.events = raw_train._data[14:].transpose()
+        else:
+            self.events = None
         # print self.data.shape, self.events.shape
         # (num_time_points, num_ch), (num_time_point, num_labels)
             
@@ -147,6 +149,44 @@ class Source:
             batch_size=batch_size,
             shuffle=shuffle,
             seed=seed)
+
+    def flow_in_once(self, with_y=False):
+        n = self.data.shape[0]
+        self.y = self.events
+        if filt2Dsize:
+            input_shape = [self.n_points, N_ELECTRODES, TIME_POINTS, 1]
+        else:
+            input_shape = [self.n_points, N_ELECTRODES, TIME_POINTS]
+        batch_x = np.zeros(input_shape, dtype=K.floatx())
+        # Here should be a sliding window of size SAMPLE_SIZE
+        # refer line 239 in genPreds_CNN_Tim.py
+        index_array = np.arange(self.n_points)+START_TRAIN
+        for i, j in enumerate(index_array):
+            sample = self.data[j-SAMPLE_SIZE:j]
+            # Reverse so we get most recent point, otherwise downsampling drops
+            # the last
+            # DOWNSAMPLE-1 points.
+            x = sample[::DOWNSAMPLE].T
+            if filt2Dsize:
+                batch_x[i, :, :, 0] = x
+            else:
+                batch_x[i, :, :] = x
+        if self.y is None:
+            return batch_x
+
+        if self.y is None:
+            return batch_x
+        elif type(self.y) is list:
+            batch_y = []
+            for i in range(len(self.y)):
+                batch_y.append(self.y[i][index_array])
+        else:
+            batch_y = self.y[index_array]
+
+        if with_y:
+            return batch_x, batch_y
+        else:
+            return batch_x
 
 
 class TrainSource(Source):
@@ -324,7 +364,7 @@ from keras.layers.normalization import BatchNormalization
 
 def create_net():
 
-    dense = 16 # larger (1024 perhaps) would be better
+    dense = 256 # larger (1024 perhaps) would be better
     if filt2Dsize:
         input_shape=(N_ELECTRODES, SAMPLE_SIZE, 1)
         conv_layer = Conv2D(8, (N_ELECTRODES, filt2Dsize), name='conv2d_1')
@@ -332,16 +372,16 @@ def create_net():
     else:
         input_shape=(N_ELECTRODES, SAMPLE_SIZE)
         conv_layer = Conv1D(8, 1, name='conv1d_1')
-        optimizer = optimizers.SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True)
+        optimizer = keras.optimizers.SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True)
 
     model = Sequential()
     model.add(Dropout(0.5, input_shape=input_shape))
     model.add(conv_layer)
     model.add(Flatten())
     model.add(Dense(dense, activation='relu', name='fc1'))
-    model.add(Dropout(0.8))
+    model.add(Dropout(0.5))
     model.add(Dense(dense, activation='relu', name='fc2'))
-    model.add(Dropout(0.8))
+    model.add(Dropout(0.5))
     model.add(Dense(N_EVENTS, activation='softmax', name='output'))
     
     # optimizer = keras.optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=1e-08)
@@ -361,7 +401,7 @@ np.random.seed(67534)
 
 BATCH_SIZE = 512
 valid_series = [3, 4]
-max_epochs = 30
+max_epochs = 1
 
 all_auc = []
 if test is False:
@@ -383,21 +423,23 @@ if test is False:
                     validation_data=test_source.flow(batch_size=2048, shuffle=True),
                     validation_steps=3,
                 )
-            probs = model.predict_generator(
-                    test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
-                    (test_source.n_points-1)//BATCH_SIZE + 1,
-                )
+            probs = model.predict(test_source.flow_in_once())
+            probs = np.concatenate((np.zeros((START_TRAIN, N_EVENTS)), probs))
+            # probs = model.predict_generator(
+            #         test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
+            #         (test_source.n_points-1)//BATCH_SIZE + 1,
+            #     )
 
             # Transform to one hot
             # probs = np.zeros((probs_val.shape[0], N_EVENTS))
             # probs = np.array[np.arange(probs.shape[0], probs_val)] = 1
             auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
-                    zip(test_source.events[START_TRAIN:, :].T, probs.T)])
+                    zip(test_source.events.T, probs.T)])
             # print probs
             # print probs.shape
             print 'Bag %d, subject %d, AUC: %.5f' % (bag, subject, auc)
             probs_tot.append(probs)
-            lbls_tot.append(test_source.events[START_TRAIN:])
+            lbls_tot.append(test_source.events[:])
 
         probs_tot = np.concatenate(probs_tot)
         lbls_tot = np.concatenate(lbls_tot)
@@ -427,10 +469,14 @@ else:
                     validation_data=test_source.flow(batch_size=2048, shuffle=True),
                     validation_steps=3,
                 )
-            probs = model.predict_generator(
-                    test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
-                    (test_source.n_points-1)//BATCH_SIZE + 1,
-                )
+            probs = model.predict(self, test_source.flow_in_once())
+            print probs
+            print probs.shape
+            probs = np.concatenate((np.zeros((START_TRAIN, N_EVENTS)), probs))
+            # probs = model.predict_generator(
+            #         test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
+            #         (test_source.n_points-1)//BATCH_SIZE + 1,
+            #     )
 
             print 'Bag %d, subject %d' % (bag, subject)
             probs_tot.append(probs)

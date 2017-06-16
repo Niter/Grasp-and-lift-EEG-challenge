@@ -110,6 +110,7 @@ def creat_mne_raw_object(fname, idx_subject, read_events='HO'):
         # events_data = np.array(events[events_names]).T
         events_data = get_horizo_velocity() if read_events == 'HO' else \
                       get_vertic_velocity() if read_events == 'VE' else None
+        # pdb.set_trace()
 
         events_data = events_data.T[idx_subject, :]
         events = np.zeros([3, events_data.shape[0]])

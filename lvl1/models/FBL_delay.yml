@@ -30,7 +30,7 @@ Preprocessing:
 PostPreprocessing:
     - DelayPreds:
         delay: 1024/ subsample
-        skip: 20/ subsample
+        skip: 200/ subsample
 
 Models:
   - '("l1",Normalizer(norm="l1")),("lr",LogisticRegression())'

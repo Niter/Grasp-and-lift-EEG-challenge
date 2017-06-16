@@ -38,12 +38,12 @@ def getLvl1ModelList():
             ['FBLCR_256',
             ['FBLCR_L1', 'FBLCR_L2', 'FBLCR_Sc', 'FBLCR_LDA', 'FBLCR_LDA_L1']],
 
-            # ['FBLCR_All', ['FBLCAll_Sc', 'FBLCAll_LDA_Sc']],
+            ['FBLCR_All', ['FBLCAll_Sc', 'FBLCAll_LDA_Sc']],
 
             ['CovsAlex_1-15Hz_500pts',   ['C500_[1_15]_LDA', 'C500_[1_15]_LR']],
             ['CovsAlex_7-30Hz_500pts',   ['C500_[7_30]_LDA', 'C500_[7_30]_LR']],
             ['CovsAlex_20-35Hz_500pts',  ['C500_[20_35]_LDA', 'C500_[20_35]_LR']],
-            # ['CovsAlex_70-150Hz_500pts', ['C500_[70_150]_LDA', 'C500_[70_150]_LR']],
+            ['CovsAlex_70-150Hz_500pts', ['C500_[70_150]_LDA', 'C500_[70_150]_LR']],
             ['CovsAlex_35Hz_250pts', ['C250_[35]_LDA', 'C250_[35]_LR']],
             ['CovsAlex_35Hz_500pts', ['C500_[35]_LDA', 'C500_[35]_LR']],
             ['CovsERP_Dist', ['ERPDist_LDA', 'ERPDist']],
@@ -51,7 +51,7 @@ def getLvl1ModelList():
             ['CovsAlex_1-15Hz_500pts_poly',   ['C500_[1_15]_poly_LR']],
             ['CovsAlex_7-30Hz_500pts_poly',   ['C500_[7_30]_poly_LR']],
             ['CovsAlex_20-35Hz_500pts_poly',  ['C500_[20_35]_poly_LR']],
-            # ['CovsAlex_70-150Hz_500pts_poly', ['C500_[70_150]_poly_LR']],
+            ['CovsAlex_70-150Hz_500pts_poly', ['C500_[70_150]_poly_LR']],
             ['CovsAlex_35Hz_250pts_poly', ['C250_[35]_poly_LR']],
             ['CovsAlex_35Hz_500pts_poly', ['C500_[35]_poly_LR']],
             ['CovsERP_Dist_poly', ['ERPDist_poly']],
@@ -63,12 +63,12 @@ def getLvl1ModelList():
 
             ['RNN_FB_delay4000', ['RNN_FB_delay4000']],
 
-            # ['cnn_script_1D_30Hz', ['CNN_1D_FB30']],
-            # ['cnn_script_1D_7-30Hz', ['CNN_1D_FB7-30']],
-            # ['cnn_script_1D_5Hz', ['CNN_1D_FB5']],
-            # ['cnn_script_2D_30Hz', ['CNN_2D_FB30']],
+            ['cnn_script_1D_30Hz', ['CNN_1D_FB30']],
+            ['cnn_script_1D_7-30Hz', ['CNN_1D_FB7-30']],
+            ['cnn_script_1D_5Hz', ['CNN_1D_FB5']],
+            ['cnn_script_2D_30Hz', ['CNN_2D_FB30']],
 
-            # ['cnn_script_1D_30Hz_shorterDelay', ['CNN_1D_FB30_shorterDelay']],
-            # ['cnn_script_2D_30Hz_shorterDelay', ['CNN_2D_FB30_shorterDelay']],
+            ['cnn_script_1D_30Hz_shorterDelay', ['CNN_1D_FB30_shorterDelay']],
+            ['cnn_script_2D_30Hz_shorterDelay', ['CNN_2D_FB30_shorterDelay']],
             ]
     return files
