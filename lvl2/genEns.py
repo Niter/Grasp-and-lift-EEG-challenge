@@ -10,6 +10,7 @@ if __name__ == '__main__' and __package__ is None:
     filePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.append(filePath)
 
+import pdb
 import numpy as np
 import yaml
 from copy import deepcopy
@@ -24,6 +25,9 @@ from ensembling.WeightedMean import WeightedMeanClassifier
 from ensembling.NeuralNet import NeuralNet
 from ensembling.XGB import XGB
 
+# To ignore the warning that: missing __init__.py
+# import warnings
+# warnings.filterwarnings("ignore", ImportWarning)
 
 def _from_yaml_to_func(method, params):
     """go from yaml to method.
@@ -123,6 +127,7 @@ else:
         model = deepcopy(model_base)
         if modelName == 'NeuralNet':
             # passing also test data to print out test error during training
+            pdb.set_trace()
             model.fit(dataTrain[train], labels[train], dataTrain[test],
                       labels[test])
         else:

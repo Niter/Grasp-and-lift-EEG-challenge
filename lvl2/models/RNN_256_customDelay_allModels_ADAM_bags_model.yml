@@ -48,8 +48,8 @@ Model:
       optim: 'adam'
       lr: 0.01
     
-    delay: 4000
-    skip: 50
+    delay: 1024
+    skip: 12
     jump: np.array([0,25,50,75,100,150,200,300,400,600,800,1200,1600,2400,3200,4800,6400])
     partsTrain: 6
     partsTest: 6

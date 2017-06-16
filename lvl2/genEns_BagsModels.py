@@ -12,6 +12,7 @@ if __name__ == '__main__' and __package__ is None:
     sys.path.append(filePath)
 
 import numpy as np
+import pandas as pd
 import yaml
 from copy import deepcopy
 from collections import OrderedDict
@@ -26,6 +27,9 @@ from ensembling.NeuralNet import NeuralNet
 from ensembling.XGB import XGB
 
 from eeg_config import N_EVENTS
+
+# import warnings
+# warnings.filterwarnings("ignore",category=DeprecationWarning)
 
 def _from_yaml_to_func(method, params):
     """go from yaml to method.
@@ -103,7 +107,7 @@ if addSubjectID:
 np.random.seed(seed)
 
 report = pd.DataFrame(index=[fileName])
-start = start_time()
+start_time = time()
 
 auc_tot = []
 p = np.zeros(labels.shape)

@@ -10,17 +10,19 @@ keras_python=/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python
 workdir=/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
 
 # for filename in models/*.yml; do
+# filename="models/CNN_196.yml"
 filename="models/RNN_256_customDelay_allModels_ADAM_bags_model.yml"
 echo "$filename"
 if [[ "$filename" == *"bags_model"* ]]
 then
     $keras_python genEns_BagsModels.py $filename val
+    # echo "pass genEns_BagsModels.py"
 elif [[ "$filename" == *"bags"* ]]
 then
-    # python genEns_BagsSubjects.py $filename $i
+    # $keras_python genEns_BagsSubjects.py $filename val
     echo "pass genEns_BagsSubjects.py"
 else
-    # python genEns.py $filename $i
+    # $keras_python genEns.py $filename val
     echo "pass genEns.py"
 fi
 # done

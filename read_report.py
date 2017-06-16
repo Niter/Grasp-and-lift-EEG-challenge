@@ -1,7 +1,7 @@
 import pandas as pd
 from glob import glob
 
-filename_list = glob('./lvl1/report/*.csv')
+filename_list = glob('./lvl1/report/val_*.csv')
 if len(filename_list) == 0:
     print 'There is no report'
 else:

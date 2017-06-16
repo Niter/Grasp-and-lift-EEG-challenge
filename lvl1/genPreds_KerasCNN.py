@@ -469,9 +469,7 @@ else:
                     validation_data=test_source.flow(batch_size=2048, shuffle=True),
                     validation_steps=3,
                 )
-            probs = model.predict(self, test_source.flow_in_once())
-            print probs
-            print probs.shape
+            probs = model.predict(test_source.flow_in_once())
             probs = np.concatenate((np.zeros((START_TRAIN, N_EVENTS)), probs))
             # probs = model.predict_generator(
             #         test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 

@@ -24,6 +24,10 @@ from ensembling.WeightedMean import WeightedMeanClassifier
 from ensembling.NeuralNet import NeuralNet
 from ensembling.XGB import XGB
 
+# To ignore the warning that: missing __init__.py
+# import warnings
+# warnings.filterwarnings("ignore", ImportWarning)
+
 def _from_yaml_to_func(method, params):
     """go from yaml to method.
 
