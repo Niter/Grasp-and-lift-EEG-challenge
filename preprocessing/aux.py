@@ -47,11 +47,11 @@ def load_raw_data(subject, test=False):
     fnames_train = glob(get_all_horizon_path_from_the_subject(subject))
     fnames_train.sort()
     if test:
-        fnames_test = glob(get_all_horizon_path_from_the_subject(subject))
-        fnames_test.sort()
-    else:
         fnames_test = fnames_train[-1:]
         fnames_train = fnames_train[:-1]
+    else:
+        fnames_test = fnames_train[2:4]
+        fnames_train = fnames_train[:2]
 
     # read and concatenate all the files
     action_1D_type = 'HO'

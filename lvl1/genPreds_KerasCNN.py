@@ -360,53 +360,82 @@ train_indices = np.zeros([TRAIN_SIZE], dtype=int) - 1
 np.random.seed(67534)
 
 BATCH_SIZE = 512
-valid_series = [5]
+valid_series = [3, 4]
 max_epochs = 50
 
-probs_bags = []
 all_auc = []
-for bag in range(bags):
-    probs_tot = []
-    lbls_tot = []
-    for subject in subjects:
-        # TODO: Also include the Nothing state to classification
-        tseries = sorted(set(TRAIN_SERIES) - set(valid_series))
-        train_source = TrainSource(subject, tseries)
-        test_source = TestSource(subject, valid_series, train_source)
+if test is False:
+    probs_bags = []
+    for bag in range(bags):
+        probs_tot = []
+        lbls_tot = []
+        for subject in subjects:
+            # TODO: Also include the Nothing state to classification
+            tseries = sorted(set(TRAIN_SERIES) - set(valid_series))
+            train_source = TrainSource(subject, tseries)
+            test_source = TestSource(subject, valid_series, train_source)
 
-        # pdb.set_trace()
-        model = create_net()
-        model.fit_generator(train_source.flow(batch_size=BATCH_SIZE, shuffle=True),
-                steps_per_epoch=train_source.n_points//BATCH_SIZE,
-                epochs=max_epochs,
-                validation_data=test_source.flow(batch_size=2048, shuffle=True),
-                validation_steps=3,
-            )
-        probs = model.predict_generator(
-                test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
-                (test_source.n_points-1)//BATCH_SIZE + 1,
-            )
+            # pdb.set_trace()
+            model = create_net()
+            model.fit_generator(train_source.flow(batch_size=BATCH_SIZE, shuffle=True),
+                    steps_per_epoch=train_source.n_points//BATCH_SIZE,
+                    epochs=max_epochs,
+                    validation_data=test_source.flow(batch_size=2048, shuffle=True),
+                    validation_steps=3,
+                )
+            probs = model.predict_generator(
+                    test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
+                    (test_source.n_points-1)//BATCH_SIZE + 1,
+                )
 
-        # Transform to one hot
-        # probs = np.zeros((probs_val.shape[0], N_EVENTS))
-        # probs = np.array[np.arange(probs.shape[0], probs_val)] = 1
+            # Transform to one hot
+            # probs = np.zeros((probs_val.shape[0], N_EVENTS))
+            # probs = np.array[np.arange(probs.shape[0], probs_val)] = 1
+            auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
+                    zip(test_source.events[START_TRAIN:, :].T, probs.T)])
+            # print probs
+            # print probs.shape
+            print 'Bag %d, subject %d, AUC: %.5f' % (bag, subject, auc)
+            probs_tot.append(probs)
+            lbls_tot.append(test_source.events[START_TRAIN:])
+
+        probs_tot = np.concatenate(probs_tot)
+        lbls_tot = np.concatenate(lbls_tot)
         auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
-                zip(test_source.events[START_TRAIN:, :].T, probs.T)])
-        # print probs
-        # print probs.shape
-        print 'Bag %d, subject %d, AUC: %.5f' % (bag, subject, auc)
-        probs_tot.append(probs)
-        lbls_tot.append(test_source.events[START_TRAIN:])
+                zip(lbls_tot.transpose(), probs_tot.transpose())])
+        print auc
+        all_auc.append(auc)
+        probs_bags.append(probs_tot)
 
-    probs_tot = np.concatenate(probs_tot)
-    lbls_tot = np.concatenate(lbls_tot)
-    auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
-            zip(lbls_tot.transpose(), probs_tot.transpose())])
-    all_auc.append(auc)
-    probs_bags.append(probs_tot)
+    probs_bags = np.mean(probs_bags, axis=0)
+    np.save('val/val_%s.npy' % fileName, [probs_bags])
 
-probs_bags = np.mean(probs_bags, axis=0)
-np.save('val/val_%s.npy' % fileName, [probs_bags])
+else:
+    probs_bags = []
+    for bag in range(bags):
+        probs_tot = []
+        for subject in subjects:
+            # TODO: Also include the Nothing state to classification
+            tseries = sorted(set(TRAIN_SERIES))
+            train_source = TrainSource(subject, tseries)
+            test_source = TestSource(subject, TEST_SERIES, train_source)
+
+            # pdb.set_trace()
+            model = create_net()
+            model.fit_generator(train_source.flow(batch_size=BATCH_SIZE, shuffle=True),
+                    steps_per_epoch=train_source.n_points//BATCH_SIZE,
+                    epochs=max_epochs,
+                    validation_data=test_source.flow(batch_size=2048, shuffle=True),
+                    validation_steps=3,
+                )
+
+            print 'Bag %d, subject %d' % (bag, subject)
+            probs_tot.append(probs)
+        probs_tot = np.concatenate(probs_tot)
+        probs_bags.append(probs_tot)
+
+    probs_bags = np.mean(probs_bags, axis=0)
+    np.save('val/val_%s.npy' % fileName, [probs_bags])
 
 prefix = 'test_' if test else 'val_'
 end_time = time()
