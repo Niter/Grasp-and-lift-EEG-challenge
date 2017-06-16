@@ -45,9 +45,8 @@ Model:
     checkEveryEpochs: 1
 
     architecture:
-      - 'Dropout':
-            p: 0.5
       - 'GRU':
+            dropout: 0.5
             num_units: 256
             next_GRU: False
       - 'Dense':
