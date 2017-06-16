@@ -30,7 +30,7 @@ Meta:
       - 'CovsERP_Dist'
       - 'CovsRafal_35Hz_256pts'
       - 'CovsRafal_35Hz_500pts'
-      #- 'CovsAlex_70-150Hz_500pts'
+      - 'CovsAlex_70-150Hz_500pts'
 
 # preprocessing functions receive arguments: X, y(only for train)
 Preprocessing:
@@ -40,8 +40,8 @@ PostPreprocessing:
     - SubSample:
         subsample: 1
     - DelayPreds:
-        delay: 512/ subsample
-        skip: 20 / subsample
+        delay: 1024/ subsample
+        skip: 20/ subsample
 
 Models:
   #- '("lda",LDA())'

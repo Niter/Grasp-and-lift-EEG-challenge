@@ -12,3 +12,5 @@ nolearn==0.6
 matplotlib
 progressbar
 pyriemann==0.2.3
+hyperopt
+xgboost

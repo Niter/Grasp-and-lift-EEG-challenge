@@ -71,10 +71,6 @@ print('Running %s in mode %s, will be saved in %s' % (modelName,mode,fileName))
 ######
 cols = getEventNames()
 
-ids = np.load('../infos_test.npy')
-subjects_test = ids[:, 1]
-series_test = ids[:, 2]
-ids = ids[:, 0]
 labels = np.load('../infos_val.npy')
 subjects = labels[:, -2]
 series = labels[:, -1]
@@ -103,10 +99,12 @@ if addSubjectID:
 
 np.random.seed(seed)
 
-if test:
-    # train the model
-    all_models = []
-    all_bags = []
+auc_tot = []
+p = np.zeros(labels.shape)
+cv = LeaveOneLabelOut(series)
+for fold, (train, test) in enumerate(cv):
+    allmodels = []
+    allbags = []
     for k in range(nbags):
         print("Train Bag #%d/%d" % (k+1, nbags))
         model = deepcopy(model_base)
@@ -114,68 +112,21 @@ if test:
         np.random.shuffle(bag)
         bag = bag[0:bagsize]
         selected_model = [i in bag for i in np.arange(len(ensemble))]
-
-        # NNs have to know how many models are in the ensemble to build the model properly
-        # for consistency passing a list of selected models rather than just indices
+        
         model.ensemble = list(np.array(ensemble)[np.where(selected_model)[0]])
         
         selected_model = np.repeat(selected_model,6)
-        all_bags.append(selected_model)
-        
+        allbags.append(selected_model)
         model.mdlNr = k
-        model.fit(dataTrain[:, selected_model], labels)
-        all_models.append(model)
-        X = None
-    dataTrain = None
-
-    # load test data
-    preds_test = OrderedDict()
-    for f in files:
-        loadPredictions(preds_test, f[0], f[1], test=True)
-    dataTest = aggr(preds_test)
-    preds_test = None
-    # switch to add subjects
-    if addSubjectID:
-        dataTest = np.c_[dataTest, subjects_test]
-
-    # get predictions
-    p = np.zeros((len(ids),6))
-    for k in range(nbags):
-        print("Test Bag #%d" % (k+1))
-        model = all_models.pop(0)
-        selected_model = all_bags[k]
-        p += model.predict_proba(dataTest[:, selected_model]) / nbags
-        model = None
-    np.save('test/test_%s.npy' % fileName, [p])
-else:
-    auc_tot = []
-    p = np.zeros(labels.shape)
-    cv = LeaveOneLabelOut(series)
-    for fold, (train, test) in enumerate(cv):
-        allmodels = []
-        allbags = []
-        for k in range(nbags):
-            print("Train Bag #%d/%d" % (k+1, nbags))
-            model = deepcopy(model_base)
-            bag = np.arange(len(ensemble))
-            np.random.shuffle(bag)
-            bag = bag[0:bagsize]
-            selected_model = [i in bag for i in np.arange(len(ensemble))]
-            
-            model.ensemble = list(np.array(ensemble)[np.where(selected_model)[0]])
-            
-            selected_model = np.repeat(selected_model,6)
-            allbags.append(selected_model)
-            model.mdlNr = k
-            if modelName == 'NeuralNet':
-                model.fit(dataTrain[train][:, selected_model], labels[train], dataTrain[test][:, selected_model], labels[test])
-            else:
-                model.fit(dataTrain[train][:, selected_model], labels[train])
-            p[test] += model.predict_proba(dataTrain[test][:, selected_model]) / nbags
-            auc = [roc_auc_score(labels[test][:, col], p[test][:, col])
-                   for col in allCols]
-            print np.mean(auc)
-        auc_tot.append(np.mean(auc))
-        print('Fold %d, score: %.5f' % (fold, auc_tot[-1]))
-    print('AUC: %.5f' % np.mean(auc_tot))
-    np.save('val/val_%s.npy' % fileName, [p])
+        if modelName == 'NeuralNet':
+            model.fit(dataTrain[train][:, selected_model], labels[train], dataTrain[test][:, selected_model], labels[test])
+        else:
+            model.fit(dataTrain[train][:, selected_model], labels[train])
+        p[test] += model.predict_proba(dataTrain[test][:, selected_model]) / nbags
+        auc = [roc_auc_score(labels[test][:, col], p[test][:, col])
+                for col in allCols]
+        print np.mean(auc)
+    auc_tot.append(np.mean(auc))
+    print('Fold %d, score: %.5f' % (fold, auc_tot[-1]))
+print('AUC: %.5f' % np.mean(auc_tot))
+np.save('val/val_%s.npy' % fileName, [p])

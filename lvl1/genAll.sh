@@ -8,17 +8,16 @@ module load keras
 
 n_subjects=10
 gpu_python=/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python
+workdir=/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
 
-cd ..
+cd $workdir
 python genInfos.py --n_subjects=$n_subjects
-cd lvl1
-cd val
-find . -type f -not -name 'placeholder' -print0 | xargs -0 rm --
-cd ..
-cd report
-find . -type f -not -name 'placeholder' -print0 | xargs -0 rm --
-cd ..
+# find $workdir/lvl1/val/ -type f -name "*" -print0 | xargs -0 rm --
+# rm -rf $workdir/lvl1/val/*
+# find $workdir/lvl1/report/ -type f -name '*.csv' -print0 | xargs -0 rm --
+# rm -rf $workdir/lvl1/report/*
 
+cd $workdir/lvl1
 # generate validation preds
 # cov models
 $gpu_python genPreds.py models/CovAlex_500.yml val --n_subjects=$n_subjects &
@@ -50,19 +49,19 @@ wait
 # Low pass EEG model
 $gpu_python genPreds.py models/FBL.yml val --n_subjects=$n_subjects &
 $gpu_python genPreds.py models/FBL_delay.yml val --n_subjects=$n_subjects &
-wait
 
 # Hybrid model (cov + FBL)
 $gpu_python genPreds.py models/FBLC_256pts.yml val --n_subjects=$n_subjects &
 $gpu_python genPreds.py models/FBLCR_256.yml val --n_subjects=$n_subjects &
-wait
+$gpu_python genPreds.py models/FBLCR_All.yml val --n_subjects=$n_subjects &
 
-# NN models
-$gpu_python genPreds_RNN.py models/RNN_FB_delay4000.yml val --n_subjects=$n_subjects
+# # NN models
+# $gpu_python genPreds_RNN.py models/RNN_FB_delay4000.yml val --n_subjects=$n_subjects
 $gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz.yml val --n_subjects=$n_subjects
-$gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz.yml val --n_subjects=$n_subjects $i
-$gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz_shorterDelay.yml val --n_subjects=$n_subjects $i
-$gpu_python genPreds_KerasCNN.py models/cnn_script_1D_30Hz.yml val --n_subjects=$n_subjects $i
-$gpu_python genPreds_KerasCNN.py models/cnn_script_1D_30Hz_shorterDelay.yml val --n_subjects=$n_subjects $i
-$gpu_python genPreds_KerasCNN.py models/cnn_script_1D_5Hz.yml val --n_subjects=$n_subjects $i
-$gpu_python genPreds_KerasCNN.py models/cnn_script_1D_7-30Hz.yml val --n_subjects=$n_subjects $i
+$gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz.yml val --n_subjects=$n_subjects
+$gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz_shorterDelay.yml val --n_subjects=$n_subjects
+$gpu_python genPreds_KerasCNN.py models/cnn_script_1D_30Hz.yml val --n_subjects=$n_subjects
+$gpu_python genPreds_KerasCNN.py models/cnn_script_1D_30Hz_shorterDelay.yml val --n_subjects=$n_subjects
+$gpu_python genPreds_KerasCNN.py models/cnn_script_1D_5Hz.yml val --n_subjects=$n_subjects
+$gpu_python genPreds_KerasCNN.py models/cnn_script_1D_7-30Hz.yml val --n_subjects=$n_subjects
+wait

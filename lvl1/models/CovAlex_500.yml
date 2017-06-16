@@ -30,7 +30,7 @@ Preprocessing:
   - FilterBank:
       filters: [[7, 30]]
   - SlidingWindow:
-      window: 256
+      window: 512
       subsample: subsample
       estimator: _lwf
   - DistanceCalculatorAlex:
@@ -41,8 +41,8 @@ Preprocessing:
 
 PostPreprocessing:
     - DelayPreds:
-        delay: 512/ subsample
-        skip: 20 / subsample
+        delay: 1024/ subsample
+        skip: 20/ subsample
 
 Models:
   - '("lda",LDA())'

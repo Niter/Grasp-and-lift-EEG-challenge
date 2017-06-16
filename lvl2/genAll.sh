@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-array=( val test )
+array=( val )
 
 for i in "${array[@]}"
 do

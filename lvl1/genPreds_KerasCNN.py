@@ -324,25 +324,27 @@ from keras.layers.normalization import BatchNormalization
 
 def create_net():
 
-    dense = 512  # larger (1024 perhaps) would be better
+    dense = 16 # larger (1024 perhaps) would be better
     if filt2Dsize:
         input_shape=(N_ELECTRODES, SAMPLE_SIZE, 1)
         conv_layer = Conv2D(8, (N_ELECTRODES, filt2Dsize), name='conv2d_1')
+        optimizer = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
     else:
         input_shape=(N_ELECTRODES, SAMPLE_SIZE)
         conv_layer = Conv1D(8, 1, name='conv1d_1')
+        optimizer = optimizers.SGD(lr=0.02, decay=1e-6, momentum=0.9, nesterov=True)
 
     model = Sequential()
     model.add(Dropout(0.5, input_shape=input_shape))
     model.add(conv_layer)
     model.add(Flatten())
     model.add(Dense(dense, activation='relu', name='fc1'))
-    model.add(Dropout(0.7))
+    model.add(Dropout(0.8))
     model.add(Dense(dense, activation='relu', name='fc2'))
-    model.add(Dropout(0.7))
+    model.add(Dropout(0.8))
     model.add(Dense(N_EVENTS, activation='softmax', name='output'))
     
-    optimizer = keras.optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=1e-08)
+    # optimizer = keras.optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=1e-08)
     model.compile(loss='binary_crossentropy',
                 optimizer=optimizer,
                 metrics=['accuracy'])
@@ -359,7 +361,7 @@ np.random.seed(67534)
 
 BATCH_SIZE = 512
 valid_series = [5]
-max_epochs = 5
+max_epochs = 50
 
 probs_bags = []
 all_auc = []
@@ -375,10 +377,10 @@ for bag in range(bags):
         # pdb.set_trace()
         model = create_net()
         model.fit_generator(train_source.flow(batch_size=BATCH_SIZE, shuffle=True),
-                steps_per_epoch=train_source.n_points//BATCH_SIZE - 4,
+                steps_per_epoch=train_source.n_points//BATCH_SIZE,
                 epochs=max_epochs,
-                validation_data=test_source.flow(batch_size=BATCH_SIZE, shuffle=True),
-                validation_steps=100,
+                validation_data=test_source.flow(batch_size=2048, shuffle=True),
+                validation_steps=3,
             )
         probs = model.predict_generator(
                 test_source.flow(batch_size=BATCH_SIZE, shuffle=False), 
@@ -390,7 +392,8 @@ for bag in range(bags):
         # probs = np.array[np.arange(probs.shape[0], probs_val)] = 1
         auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in 
                 zip(test_source.events[START_TRAIN:, :].T, probs.T)])
-        # pdb.set_trace()
+        # print probs
+        # print probs.shape
         print 'Bag %d, subject %d, AUC: %.5f' % (bag, subject, auc)
         probs_tot.append(probs)
         lbls_tot.append(test_source.events[START_TRAIN:])
