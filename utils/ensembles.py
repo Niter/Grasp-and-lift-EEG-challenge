@@ -25,7 +25,7 @@ def createEnsFunc(ensemble):
 
 def getLvl1ModelList():
     """Get the complete list of lvl1 models."""
-    # format: [filename, [model names]]
+    # format: [filename, [model names]] files = [
     files = [
             ['FBL', ['FBL_L1', 'FBL_L2', 'FBL_Sc', 'FBL_LDA', 'FBL_LDA_L1']],
 
@@ -43,7 +43,7 @@ def getLvl1ModelList():
             ['CovsAlex_1-15Hz_500pts',   ['C500_[1_15]_LDA', 'C500_[1_15]_LR']],
             ['CovsAlex_7-30Hz_500pts',   ['C500_[7_30]_LDA', 'C500_[7_30]_LR']],
             ['CovsAlex_20-35Hz_500pts',  ['C500_[20_35]_LDA', 'C500_[20_35]_LR']],
-            ['CovsAlex_70-150Hz_500pts', ['C500_[70_150]_LDA', 'C500_[70_150]_LR']],
+            # ['CovsAlex_70-150Hz_500pts', ['C500_[70_150]_LDA', 'C500_[70_150]_LR']],
             ['CovsAlex_35Hz_250pts', ['C250_[35]_LDA', 'C250_[35]_LR']],
             ['CovsAlex_35Hz_500pts', ['C500_[35]_LDA', 'C500_[35]_LR']],
             ['CovsERP_Dist', ['ERPDist_LDA', 'ERPDist']],
@@ -51,7 +51,7 @@ def getLvl1ModelList():
             ['CovsAlex_1-15Hz_500pts_poly',   ['C500_[1_15]_poly_LR']],
             ['CovsAlex_7-30Hz_500pts_poly',   ['C500_[7_30]_poly_LR']],
             ['CovsAlex_20-35Hz_500pts_poly',  ['C500_[20_35]_poly_LR']],
-            ['CovsAlex_70-150Hz_500pts_poly', ['C500_[70_150]_poly_LR']],
+            # ['CovsAlex_70-150Hz_500pts_poly', ['C500_[70_150]_poly_LR']],
             ['CovsAlex_35Hz_250pts_poly', ['C250_[35]_poly_LR']],
             ['CovsAlex_35Hz_500pts_poly', ['C500_[35]_poly_LR']],
             ['CovsERP_Dist_poly', ['ERPDist_poly']],

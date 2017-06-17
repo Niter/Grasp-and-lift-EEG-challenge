@@ -67,6 +67,8 @@ def load_raw_data(subject, test=False):
     data_train = raw_train._data[picks].T
     labels_train = raw_train._data[len(CH_NAMES):].T
 
+    print 'fnames_train:', fnames_train
+    print 'fnames_test:', fnames_test
     raw_test = [creat_mne_raw_object(fname, test_idx_offset + i, read_events=action_1D_type) 
             for i, fname in enumerate(fnames_test)]
     raw_test = concatenate_raws(raw_test)

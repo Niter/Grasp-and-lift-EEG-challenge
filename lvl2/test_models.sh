@@ -11,7 +11,7 @@ workdir=/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
 n_subjects=4
 
 cd $workdir
-python genInfos.py --n_subjects=$n_subjects
+# python genInfos.py --n_subjects=$n_subjects
 cd $workdir/lvl2
 
 # for filename in models/*.yml; do
@@ -19,7 +19,9 @@ cd $workdir/lvl2
 # filename="models/RNN_256_customDelay_allModels_ADAM_bags_model.yml"
 # filename="models/RNN_256_customDelay_allModels_ADAM.yml"
 # filename="models/RNN_256_delay4000_allModels_ADAM_bags.yml"
-filename='models/xgb_bags.yml'
+# filename='models/xgb_bags.yml'
+# filename="models/xgb_longshort_bags_model.yml"
+filename="models/NN_256_allModels_ADAM_bags.yml"
 echo "$filename"
 if [[ "$filename" == *"bags_model"* ]]
 then

@@ -1,7 +1,15 @@
 import pandas as pd
 from glob import glob
+import argparse
 
-filename_list = glob('./lvl1/report/val_*.csv')
+parser = argparse.ArgumentParser()
+parser.add_argument('--n_subjects', type=int, action='store', default=2)
+parser.add_argument('-l', type=int, action='store', default=1)
+args, unknown = parser.parse_known_args()
+subjects = range(1, args.n_subjects + 1)
+level = args.l
+
+filename_list = glob('./lvl%d/report/val_*.csv'%level)
 if len(filename_list) == 0:
     print 'There is no report'
 else:

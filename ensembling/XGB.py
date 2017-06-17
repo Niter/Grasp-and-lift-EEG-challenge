@@ -13,6 +13,8 @@ from progressbar import Bar, ETA, Percentage, ProgressBar, RotatingMarker
 from preprocessing.aux import delay_preds
 import xgboost as xgb
 
+from eeg_config import N_EVENTS
+
 
 class XGB(BaseEstimator, ClassifierMixin):
 
@@ -63,11 +65,11 @@ class XGB(BaseEstimator, ClassifierMixin):
         
         widgets = ['Training : ', Percentage(), ' ', Bar(marker=RotatingMarker()),
            ' ', ETA(), ' ']
-        pbar = ProgressBar(widgets=widgets, maxval=6)
+        pbar = ProgressBar(widgets=widgets, maxval=N_EVENTS)
         pbar.start()
         
         # training separate models for each event
-        for col in range(6):
+        for col in range(N_EVENTS):
             self.clf.append(xgb.XGBClassifier(n_estimators=self.n_estimators,
                                               max_depth=self.max_depth,
                                               subsample=self.subsample,
@@ -78,7 +80,7 @@ class XGB(BaseEstimator, ClassifierMixin):
     def _predict_proba(self,X):
         """Predict probability for each event separately, then concatenate results."""
         pred = []
-        for col in range(6):
+        for col in range(N_EVENTS):
             pred.append(self.clf[col].predict_proba(X)[:, 1])
         pred = np.vstack(pred).transpose()
         return pred
@@ -86,7 +88,7 @@ class XGB(BaseEstimator, ClassifierMixin):
     def predict_proba(self, X):
         """Predict probability."""
         if self.applyPreds:
-            p = np.zeros((X.shape[0],6))
+            p = np.zeros((X.shape[0], N_EVENTS))
             for part in range(self.partsTest):
                 start = part*X.shape[0]//self.partsTest-self.delay*(part>0)
                 stop = (part+1)*X.shape[0]//self.partsTest

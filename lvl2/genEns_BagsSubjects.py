@@ -6,11 +6,13 @@ Created on Sat Aug 15 14:12:12 2015
 """
 import os
 import sys
+from time import time
 if __name__ == '__main__' and __package__ is None:
     filePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.append(filePath)
 
 import pdb
+import pandas as pd
 import numpy as np
 import yaml
 from copy import deepcopy
@@ -74,6 +76,13 @@ elif mode == 'test':
 else:
     raise('Invalid mode. Please specify either val or test')
 
+if test:
+    folder = 'test/'
+    prefix = 'test_'
+else:
+    folder = 'val/'
+    prefix = 'val_'
+
 print('Running %s in mode %s, will be saved in %s' % (modelName,mode,fileName))
 
 ######
@@ -110,6 +119,9 @@ if addSubjectID:
     dataTrain = np.c_[dataTrain, subjects]
 
 np.random.seed(4234521)
+
+report = pd.DataFrame(index=[fileName])
+start_time = time()
 
 if test:
     # train the model
@@ -167,4 +179,9 @@ else:
         auc_tot.append(np.mean(auc))
         print('Fold %d, score: %.5f' % (fold, auc_tot[-1]))
     print('AUC: %.5f' % np.mean(auc_tot))
+    report['AUC'] = np.mean(auc_tot)
     np.save('val/val_%s.npy' % fileName, [p])
+
+end_time = time()
+report['Time'] = end_time - start_time
+report.to_csv("report/%s_%s.csv" % (prefix, fileName))
