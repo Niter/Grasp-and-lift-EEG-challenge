@@ -47,8 +47,8 @@ Model:
       decay: 1e-6
       momentum: 0.9
     
-    delay: 1500
-    skip: 100
+    delay: 256
+    skip: 18
     partsTrain: 6
     partsTest: 6
     smallEpochs: 2

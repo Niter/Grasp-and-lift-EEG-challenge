@@ -19,12 +19,12 @@ do
     echo "$filename"
     if [[ "$filename" == *"bags_model"* ]]
     then
-      # $keras_python genEns_BagsModels.py $filename $i --n_subjects=$n_subjects
-      echo "pass genEns_BagsModels.py"
+      $keras_python genEns_BagsModels.py $filename $i --n_subjects=$n_subjects
+      # echo "pass genEns_BagsModels.py"
     elif [[ "$filename" == *"bags"* ]]
     then
-      # $keras_python genEns_BagsSubjects.py $filename $i --n_subjects=$n_subjects
-      echo "pass genEns_BagsSubjects.py"
+      $keras_python genEns_BagsSubjects.py $filename $i --n_subjects=$n_subjects
+      # echo "pass genEns_BagsSubjects.py"
     else
       $keras_python genEns.py $filename $i --n_subjects=$n_subjects
       # echo "pass genEns.py"

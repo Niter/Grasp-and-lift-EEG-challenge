@@ -5,6 +5,7 @@ Created on Sat Aug 15 18:18:11 2015
 @author: rc, alex
 """
 
+import pdb
 import numpy as np
 from sklearn.base  import BaseEstimator, ClassifierMixin
 from sklearn.metrics import roc_auc_score
@@ -105,7 +106,6 @@ class NeuralNet(BaseEstimator,ClassifierMixin):
             
             # print 'trainData:', trainData.shape
             # print 'targets:', targets.shape
-            # print theano.printing.debugprint(self.model)
             self.model.fit(trainData, targets, epochs=self.smallEpochs, 
                            batch_size=512,verbose=0)
             

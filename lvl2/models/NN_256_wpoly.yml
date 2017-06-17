@@ -38,8 +38,8 @@ Model:
     training_params:
       lr: 0.1
     
-    delay: 1500
-    skip: 100
+    delay: 256
+    skip: 18
     partsTrain: 2
     partsTest: 2
     smallEpochs: 2

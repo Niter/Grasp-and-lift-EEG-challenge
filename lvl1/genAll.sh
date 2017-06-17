@@ -63,6 +63,7 @@ do
     $gpu_python genPreds.py models/FBLCR_All.yml $i --n_subjects=$n_subjects &
 
     # NN models
+    $gpu_python genPreds_RNN.py models/NN_256.yml $i --n_subjects=$n_subjects
     $gpu_python genPreds_RNN.py models/RNN_FB_delay4000.yml $i --n_subjects=$n_subjects
     # $gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz.yml $i --n_subjects=$n_subjects
     # $gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz_shorterDelay.yml $i --n_subjects=$n_subjects

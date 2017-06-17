@@ -34,7 +34,7 @@ def buildNN(architecture,training_params,input_dim):
             model.add(PReLU())
         if layer_name == 'Dropout':
             if is_first_layer:
-                model.add(Dropout(layer_params['p'], input_shape=(None, current_units)))
+                model.add(Dropout(layer_params['p'], input_shape=(current_units,)))
             else:
                 model.add(Dropout(layer_params['p']))
         if layer_name == 'Dense':

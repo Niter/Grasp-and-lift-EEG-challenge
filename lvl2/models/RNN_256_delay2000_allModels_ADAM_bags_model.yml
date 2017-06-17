@@ -47,8 +47,8 @@ Model:
       optim: 'adam'
       lr: 0.01
     
-    delay: 2000
-    skip: 50
+    delay: 256
+    skip: 6
     partsTrain: 6
     partsTest: 8
     smallEpochs: 1
