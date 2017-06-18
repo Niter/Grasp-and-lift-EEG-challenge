@@ -15,7 +15,7 @@ cd $workdir/lvl2
 
 for i in "${array[@]}"
 do
-  for filename in models/*.yml; do
+  for filename in models/xgb*.yml; do
     echo "$filename"
 
     if [[ "$filename" == *"bags_model"* ]]

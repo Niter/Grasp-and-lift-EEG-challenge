@@ -21,7 +21,6 @@ from eeg_config import N_EVENTS
 def buildNN(architecture,training_params,input_dim):
     """Lay out a Neural Network as described in the YAML file."""
     current_units = input_dim
-    print input_dim
     
     model = Sequential()
     is_first_layer = True
