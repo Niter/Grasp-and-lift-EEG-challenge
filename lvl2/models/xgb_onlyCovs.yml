@@ -32,8 +32,8 @@ Model:
     max_depth: 5
     subsample: 0.7
 
-    delay: 256
-    skip: 72
+    delay: 250
+    skip: 25
 
-    subsample_data: 50
+    subsample_data: 25
     partsTest: 2

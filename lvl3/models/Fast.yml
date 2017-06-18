@@ -1,0 +1,17 @@
+
+
+fileName: 'Fast'
+subsample: 100
+seed: 45667
+mean_type: ['arithmetic','geometric','power']
+verbose: False
+
+#score on series 7: 0.97830
+#score on series 8: 0.97832
+#CV score: 0.97831 / 0.000014
+
+ensemble: [
+            'xgb_NN_FBL',
+            'xgb_NN_FBL_bags',
+            'xgb_NN_FBL_bags_model',
+            ]

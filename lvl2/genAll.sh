@@ -10,12 +10,12 @@ workdir=/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
 n_subjects=12
 
 cd $workdir
-python genInfos.py --n_subjects=$n_subjects
+# python genInfos.py --n_subjects=$n_subjects
 cd $workdir/lvl2
 
 for i in "${array[@]}"
 do
-  for filename in models/[xgbNN]*.yml; do
+  for filename in models/*.yml; do
     echo "$filename"
 
     if [[ "$filename" == *"bags_model"* ]]

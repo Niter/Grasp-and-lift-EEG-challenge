@@ -43,8 +43,8 @@ Model:
     max_depth: 5
     subsample: 0.7
     
-    delay: 256
-    skip: 5
+    delay: 500
+    skip: 25
     jump: np.array([0,25,50,150,300,600,1200])
     
     subsample_data: 25

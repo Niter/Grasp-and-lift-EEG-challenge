@@ -23,7 +23,6 @@ for i in "${array[@]}"
 do
     # Low pass EEG model x 2
     $gpu_python genPreds.py models/FBL.yml $i --n_subjects=$n_subjects &
-    $gpu_python genPreds.py models/FBL_delay.yml $i --n_subjects=$n_subjects &
 
     # NN models
     $gpu_python genPreds_RNN.py models/NN_16.yml val --n_subjects=$n_subjects
@@ -38,7 +37,7 @@ done
 cd $workdir/lvl2
 for i in "${array[@]}"
 do
-  for filename in models/[xgbNN]*.yml; do
+  for filename in models/[xgb]*.yml; do
     echo "$filename"
 
     if [[ "$filename" == *"bags_model"* ]]
@@ -55,3 +54,6 @@ do
     fi
   done
 done
+
+cd $workdir/lvl3
+$keras_python genFinal.py models/Fast.yml
