@@ -31,6 +31,13 @@ Model:
                 'ERPDist_poly',
                 
                 'CovsRafal_35Hz_256', 'CovsRafal_35Hz_500',
+
+                'NN_16', 
+                'NN_32', 
+                'NN_64', 
+                'NN_128',
+                'NN_256',
+                'NN_512',
                 
                 # 'CNN_1D_FB30',
                 # 'CNN_2D_FB30', 
@@ -43,8 +50,8 @@ Model:
     max_depth: 5
     subsample: 0.7
         
-    delay: 1000
-    skip: 150
+    delay: 256
+    skip: 72
     
     subsample_data: 50
     partsTest: 4

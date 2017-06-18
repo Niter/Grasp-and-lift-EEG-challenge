@@ -31,6 +31,13 @@ Model:
                 'C250_[35]_poly_LR',
                 'C500_[35]_poly_LR',
                 'ERPDist_poly',
+
+                'NN_16', 
+                'NN_32', 
+                'NN_64', 
+                'NN_128',
+                'NN_256',
+                'NN_512',
                 
                 # 'CNN_1D_FB30',
                 # 'CNN_2D_FB30', 

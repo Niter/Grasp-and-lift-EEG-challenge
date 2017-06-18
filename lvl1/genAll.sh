@@ -63,6 +63,9 @@ do
     $gpu_python genPreds.py models/FBLCR_All.yml $i --n_subjects=$n_subjects &
 
     # NN models
+    $gpu_python genPreds_RNN.py models/NN_16.yml val --n_subjects=$n_subjects
+    $gpu_python genPreds_RNN.py models/NN_32.yml val --n_subjects=$n_subjects
+    $gpu_python genPreds_RNN.py models/NN_64.yml val --n_subjects=$n_subjects
     $gpu_python genPreds_RNN.py models/NN_128.yml $i --n_subjects=$n_subjects
     $gpu_python genPreds_RNN.py models/NN_256.yml $i --n_subjects=$n_subjects
     $gpu_python genPreds_RNN.py models/NN_512.yml $i --n_subjects=$n_subjects

@@ -61,6 +61,13 @@ def getLvl1ModelList():
             ['CovsRafal_35Hz_256pts', ['CovsRafal_35Hz_256']],
             ['CovsRafal_35Hz_500pts', ['CovsRafal_35Hz_500']],
 
+            ['NN_16', ['NN_16']],
+            ['NN_32', ['NN_32']],
+            ['NN_64', ['NN_64']],
+            ['NN_128', ['NN_128']],
+            ['NN_256', ['NN_256']],
+            ['NN_512', ['NN_512']],
+
             ['RNN_FB_delay4000', ['RNN_FB_delay4000']],
 
             # ['cnn_script_1D_30Hz', ['CNN_1D_FB30']],

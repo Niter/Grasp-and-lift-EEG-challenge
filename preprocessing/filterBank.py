@@ -33,14 +33,15 @@ class FilterBank(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         """Transform. Apply filters."""
         X_tot = None
+        div_Wn = 64.0
         for freqs in self.freqs_pairs:
             if len(freqs) == 1:
-                b, a = butter(5, freqs[0] / 250.0, btype='lowpass')
+                b, a = butter(5, freqs[0] / div_Wn, btype='lowpass')
             else:
                 if freqs[1] - freqs[0] < 3:
-                    b, a = butter(3, np.array(freqs) / 250.0, btype='bandpass')
+                    b, a = butter(3, np.array(freqs) / div_Wn, btype='bandpass')
                 else:
-                    b, a = butter(5, np.array(freqs) / 250.0, btype='bandpass')
+                    b, a = butter(5, np.array(freqs) / div_Wn, btype='bandpass')
             X_filtered = lfilter(b, a, X, axis=0)
             X_tot = X_filtered if X_tot is None else np.c_[X_tot, X_filtered]
 

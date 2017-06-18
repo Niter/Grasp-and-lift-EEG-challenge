@@ -21,6 +21,13 @@ Model:
                 'CAll_LR',
                 
                 'CovsRafal_35Hz_256','CovsRafal_35Hz_500',
+
+                'NN_16', 
+                'NN_32', 
+                'NN_64', 
+                'NN_128',
+                'NN_256',
+                'NN_512',
                 
                 # 'CNN_1D_FB30',
                 # 'CNN_2D_FB30', 

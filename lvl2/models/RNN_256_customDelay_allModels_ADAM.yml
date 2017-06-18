@@ -19,6 +19,13 @@ Model:
                 'C500_[35]_LR', 'C500_[35]_LDA',
                 'ERPDist', 'ERPDist_LDA',
                 'CAll_LR',
+
+                'NN_16', 
+                'NN_32', 
+                'NN_64', 
+                'NN_128',
+                'NN_256',
+                'NN_512',
                 
                 'CovsRafal_35Hz_256','CovsRafal_35Hz_500',
                 
