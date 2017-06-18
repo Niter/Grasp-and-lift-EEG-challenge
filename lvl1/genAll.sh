@@ -6,7 +6,7 @@ module unload python
 module load tensorflow/1.1.0
 module load keras
 
-n_subjects=4
+n_subjects=12
 gpu_python=/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python
 workdir=/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
 # array=( val test )
@@ -63,7 +63,9 @@ do
     $gpu_python genPreds.py models/FBLCR_All.yml $i --n_subjects=$n_subjects &
 
     # NN models
+    $gpu_python genPreds_RNN.py models/NN_128.yml $i --n_subjects=$n_subjects
     $gpu_python genPreds_RNN.py models/NN_256.yml $i --n_subjects=$n_subjects
+    $gpu_python genPreds_RNN.py models/NN_512.yml $i --n_subjects=$n_subjects
     $gpu_python genPreds_RNN.py models/RNN_FB_delay4000.yml $i --n_subjects=$n_subjects
     # $gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz.yml $i --n_subjects=$n_subjects
     # $gpu_python genPreds_KerasCNN.py models/cnn_script_2D_30Hz_shorterDelay.yml $i --n_subjects=$n_subjects

@@ -52,9 +52,9 @@ def load_raw_data(subject, test=False):
         fnames_train = fnames_train[:-1]
         test_idx_offset = 4
     else:
-        fnames_test = fnames_train[2:4]
-        fnames_train = fnames_train[:2]
-        test_idx_offset = 2
+        fnames_test = fnames_train[3:5]
+        fnames_train = fnames_train[:3]
+        test_idx_offset = 3
 
     # read and concatenate all the files
     action_1D_type = 'HO'

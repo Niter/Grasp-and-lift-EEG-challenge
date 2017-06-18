@@ -37,17 +37,19 @@ for subject in subjects:
     # fnames = glob('data/train/subj%d_series*_data.csv' % (subject))
     fnames = glob(get_all_horizon_path_from_the_subject(subject))
     fnames.sort()
-    fnames_val = fnames[2:4]
+    fnames_val = fnames[3:5]
 
     fnames_test = fnames[-1:]
     # fnames_test = glob('data/test/subj%d_series*_data.csv' % (subject))
     # fnames_test.sort()
+    val_index_offset = 3
+    test_index_offset = 4
 
     # Note that the 2nd args of creat_mne_raw_object is zero-based
     action_1D_type = 'HO'
-    raw_val = concatenate_raws([creat_mne_raw_object(fname, 2+i, read_events=action_1D_type) 
+    raw_val = concatenate_raws([creat_mne_raw_object(fname, val_index_offset + i, read_events=action_1D_type) 
             for i, fname in enumerate(fnames_val)])
-    raw_test = concatenate_raws([creat_mne_raw_object(fname, 4+i, read_events=action_1D_type) 
+    raw_test = concatenate_raws([creat_mne_raw_object(fname, test_index_offset + i, read_events=action_1D_type) 
             for i, fname in enumerate(fnames_test)])
 
     # extract labels for series 7&8
@@ -55,9 +57,9 @@ for subject in subjects:
     lbls_tot.append(labels.transpose())
 
     # aggregate infos for validation (series 7&8)
-    raw_series3 = creat_mne_raw_object(fnames_val[0], 2, action_1D_type)
-    raw_series4 = creat_mne_raw_object(fnames_val[1], 3, action_1D_type)
-    series = np.array([3] * raw_series3.n_times + [4] * raw_series4.n_times)
+    raw_series3 = creat_mne_raw_object(fnames_val[0], 3, action_1D_type)
+    raw_series4 = creat_mne_raw_object(fnames_val[1], 4, action_1D_type)
+    series = np.array([4] * raw_series3.n_times + [5] * raw_series4.n_times)
     series_val_tot.append(series)
 
     subjs = np.array([subject]*labels.shape[1])

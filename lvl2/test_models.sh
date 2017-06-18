@@ -15,7 +15,7 @@ cd $workdir
 cd $workdir/lvl2
 
 # for filename in models/*.yml; do
-filename="models/CNN_196.yml"
+filename="models/RNN_256_delay4000_allModels_ADAM_bags_model.yml"
 # filename="models/RNN_256_customDelay_allModels_ADAM_bags_model.yml"
 # filename="models/RNN_256_customDelay_allModels_ADAM.yml"
 # filename="models/RNN_256_delay4000_allModels_ADAM_bags.yml"

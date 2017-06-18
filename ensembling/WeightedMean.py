@@ -4,6 +4,7 @@ Created on Sat Aug 15 14:12:12 2015.
 
 @author: rc, alex
 """
+import pdb
 import numpy as np
 from collections import OrderedDict
 from sklearn.base import BaseEstimator, ClassifierMixin
@@ -11,6 +12,8 @@ from sklearn.metrics import roc_auc_score
 from hyperopt import fmin, tpe, hp
 
 from progressbar import Bar, ETA, Percentage, ProgressBar, RotatingMarker
+
+from eeg_config import N_EVENTS
 
 
 class WeightedMeanClassifier(BaseEstimator, ClassifierMixin):
@@ -49,8 +52,8 @@ class WeightedMeanClassifier(BaseEstimator, ClassifierMixin):
                 self.pbar.start()
             
             objective = lambda w: -np.mean([roc_auc_score(y[:, col],
-                                            self.calcMean(X[:, col::6], w, training=True))
-                                            for col in range(6)])
+                                            self.calcMean(X[:, col::N_EVENTS], w, training=True))
+                                            for col in range(N_EVENTS)])
                                             
             self.best_params = fmin(objective, self.param_space, algo=tpe.suggest,
                                     max_evals=self.max_evals)
@@ -62,8 +65,8 @@ class WeightedMeanClassifier(BaseEstimator, ClassifierMixin):
     
     def predict_proba(self, X):
         """Get predictions."""
-        return np.c_[[self.calcMean(X[:, col::6], self.best_params)
-                      for col in range(6)]].transpose()
+        return np.c_[[self.calcMean(X[:, col::N_EVENTS], self.best_params)
+                      for col in range(N_EVENTS)]].transpose()
     
     def calcMean(self, X, w, training = False):
         """Calculate Mean according to weights."""
