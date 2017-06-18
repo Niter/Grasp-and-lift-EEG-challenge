@@ -12,7 +12,7 @@ from mne import concatenate_raws
 import pdb
 from preprocessing.aux import creat_mne_raw_object
 from eeg_config import CH_NAMES
-from read_adapter import get_all_horizon_path_from_the_subject
+from read_adapter import get_all_horizon_path_from_the_subject, get_all_vertical_path_from_the_subject
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -35,7 +35,8 @@ for subject in subjects:
     print 'Loading data for subject %d...' % subject
     # ############### READ DATA ###############################################
     # fnames = glob('data/train/subj%d_series*_data.csv' % (subject))
-    fnames = glob(get_all_horizon_path_from_the_subject(subject))
+    # fnames = glob(get_all_horizon_path_from_the_subject(subject))
+    fnames = glob(get_all_vertical_path_from_the_subject(subject))
     fnames.sort()
     fnames_val = fnames[3:5]
 
@@ -46,7 +47,8 @@ for subject in subjects:
     test_index_offset = 4
 
     # Note that the 2nd args of creat_mne_raw_object is zero-based
-    action_1D_type = 'HO'
+    # action_1D_type = 'HO'
+    action_1D_type = 'VE'
     raw_val = concatenate_raws([creat_mne_raw_object(fname, val_index_offset + i, read_events=action_1D_type) 
             for i, fname in enumerate(fnames_val)])
     raw_test = concatenate_raws([creat_mne_raw_object(fname, test_index_offset + i, read_events=action_1D_type) 

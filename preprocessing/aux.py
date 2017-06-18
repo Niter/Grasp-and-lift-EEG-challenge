@@ -16,7 +16,7 @@ from glob import glob
 
 import pdb
 from eeg_config import CH_NAMES
-from read_adapter import get_all_horizon_path_from_the_subject, get_horizo_velocity, get_vertic_velocity
+from read_adapter import get_all_horizon_path_from_the_subject, get_all_vertical_path_from_the_subject, get_horizo_velocity, get_vertic_velocity
 
 
 def getChannelNames():
@@ -45,7 +45,7 @@ def load_raw_data(subject, test=False):
     data series 7 and 8.
     """
     # fnames_train = glob('../data/train/subj%d_series*_data.csv' % (subject))
-    fnames_train = glob(get_all_horizon_path_from_the_subject(subject))
+    fnames_train = glob(get_all_vertical_path_from_the_subject(subject))
     fnames_train.sort()
     if test:
         fnames_test = fnames_train[-1:]
@@ -57,7 +57,8 @@ def load_raw_data(subject, test=False):
         test_idx_offset = 3
 
     # read and concatenate all the files
-    action_1D_type = 'HO'
+    # action_1D_type = 'HO'
+    action_1D_type = 'VE'
     raw_train = [creat_mne_raw_object(fname, i, read_events=action_1D_type) for i, fname in enumerate(fnames_train)]
     raw_train = concatenate_raws(raw_train)
     # pick eeg signal
