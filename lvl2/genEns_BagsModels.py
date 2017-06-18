@@ -21,13 +21,19 @@ from sklearn.metrics import roc_auc_score
 from sklearn.cross_validation import LeaveOneLabelOut
 
 from preprocessing.aux import getEventNames, delay_preds
-from utils.ensembles import createEnsFunc, loadPredictions, getLvl1ModelList
+from utils.ensembles import createEnsFunc, loadPredictions, getLvl1ModelList, getFastLvl1ModelList
 
 from ensembling.WeightedMean import WeightedMeanClassifier
 from ensembling.NeuralNet import NeuralNet
 from ensembling.XGB import XGB
 
 from eeg_config import N_EVENTS
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-fast', type=bool, action='store', default=False)
+args, unknown = parser.parse_known_args()
+is_fast = args.fast
 
 # import warnings
 # warnings.filterwarnings("ignore",category=DeprecationWarning)
@@ -94,7 +100,7 @@ labels = labels[:, :-2]
 allCols = range(len(cols))
 
 # ## loading prediction ###
-files = getLvl1ModelList()
+files = getFastLvl1ModelList() if is_fast else getLvl1ModelList()
 
 preds_val = OrderedDict()
 for f in files:

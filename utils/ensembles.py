@@ -22,6 +22,21 @@ def createEnsFunc(ensemble):
     ens = eval('lambda preds : np.c_[%s]' % (func))
     return ens
 
+def getFastLvl1ModelList():
+    """Get the complete list of lvl1 models."""
+    # format: [filename, [model names]] files = [
+    files = [
+            ['FBL', ['FBL_L1', 'FBL_L2', 'FBL_Sc', 'FBL_LDA', 'FBL_LDA_L1']],
+
+            ['NN_16', ['NN_16']],
+            ['NN_32', ['NN_32']],
+            ['NN_64', ['NN_64']],
+            ['NN_128', ['NN_128']],
+            ['NN_256', ['NN_256']],
+            ['NN_512', ['NN_512']],
+
+            ]
+    return files
 
 def getLvl1ModelList():
     """Get the complete list of lvl1 models."""
