@@ -6,6 +6,7 @@ imports:
         - SubSample
     sklearn.linear_model:
         - LogisticRegression
+        - LinearRegression
     sklearn.preprocessing:
         - StandardScaler
         - Normalizer
@@ -22,14 +23,14 @@ Meta:
 
 # preprocessing functions receive arguments: X, y(only for train)
 Preprocessing:
-  - FilterBank:
-      filters: "'LowpassBank'"
+    # - FilterBank:
+    # -   filters: "'LowpassBank'"
   - SubSample:
       subsample: subsample
 
 Models:
-  - '("l1",Normalizer(norm="l1")),("lr",LogisticRegression())'
-  - '("l2",Normalizer(norm="l2")),("lr",LogisticRegression())'
-  - '("sc",StandardScaler()),("lr",LogisticRegression())'
-  - '("lda",LDA())'
-  - '("l1",Normalizer(norm="l1")),("lda",LDA())'
+  - '("l1",Normalizer(norm="l1")),("lr",LinearRegression())'
+  - '("l2",Normalizer(norm="l2")),("lr",LinearRegression())'
+  - '("sc",StandardScaler()),("lr",LinearRegression())'
+    # - '("lda",LDA())'
+    # - '("l1",Normalizer(norm="l1")),("lda",LDA())'

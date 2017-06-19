@@ -18,7 +18,7 @@ import yaml
 from time import time
 from copy import deepcopy
 from progressbar import Bar, ETA, Percentage, ProgressBar, RotatingMarker
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, mean_squared_error, r2_score
 from sklearn.pipeline import make_pipeline
 
 from preprocessing.aux import load_raw_data
@@ -184,13 +184,32 @@ for subject in subjects:
                       majorEpochs=majorEpochs,smallEpochs=smallEpochs,
                       checkEveryEpochs=checkEveryEpochs)
 
+    def normalize(data, meta_data = None):
+        if meta_data == None:
+            data_mean, data_max, data_min = np.mean(data), np.max(data), np.min(data)
+        else:
+            assert(len(meta_data) == 3)
+            data_mean, data_max, data_min = meta_data
+        return [data_mean, data_max, data_min], (data - data_mean) / (2.0 * (data_max - data_min))
+
+    def inv_normalize(data, meta_data):
+        assert(len(meta_data) == 3)
+        data_mean, data_max, data_min = meta_data
+        return data * (2.0 * (data_max - data_min)) + data_mean
+
+    train_norm_meta, labels_train = normalize(labels_train)
+    _, labels_test = normalize(labels_test, meta_data = train_norm_meta)
     model.fit(trainPreprocessed,labels_train,testPreprocessed,labels_test)
     
     preds = model.predict_proba(testPreprocessed)
+    preds = inv_normalize(preds, meta_data = train_norm_meta)
+    labels_test = inv_normalize(labels_test, meta_data = train_norm_meta)
 
     if not test:
-        auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in
+        auc = np.mean([r2_score(trueVals, p) for trueVals, p in
                       zip(labels_test.T, preds.T)])
+        print np.max(preds.T), np.min(preds.T)
+        # pdb.set_trace()
         print("%d, test AUC : %.5f" % (subject, auc))
 
     np.save('%s/sub%d.npy' % (saveFolder, subject), preds)
@@ -213,7 +232,7 @@ for subject in subjects:
     preds_tot.append(np.load('%s/sub%d.npy' % (saveFolder, subject)))
 preds_tot = np.concatenate(preds_tot)
 if not test:
-    auc = [roc_auc_score(trueVals, p) for trueVals, p in
+    auc = [r2_score(trueVals, p) for trueVals, p in
                   zip(labels.transpose(), preds_tot.transpose())]
     print np.mean(auc)
     report['AUC'] = np.mean(auc)

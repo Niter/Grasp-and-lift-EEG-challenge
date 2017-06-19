@@ -5,12 +5,14 @@ imports:
     preprocessing.aux:
         - SlidingWindow
         - DelayPreds
+        - FlattenTransformer
     preprocessing.covs_alex:
         - DistanceCalculatorAlex
     pyriemann.utils.covariance:
         - _lwf
     sklearn.linear_model:
         - LogisticRegression
+        - LinearRegression
     sklearn.preprocessing:
         - StandardScaler
         - Normalizer
@@ -21,30 +23,31 @@ imports:
 # Meta variables
 Meta:
   file: 'CovsAlex_35Hz_250pts'
-  cores: 16
+  cores: 1 
   subsample: 1
   subsample_test: 1
-  cachePreprocessed: True
+  cachePreprocessed: False
 
 # preprocessing functions receive arguments: X, y(only for train), subject (subject's number)
 Preprocessing:
-  - FilterBank:
-      filters: [[35]]
+    # - FilterBank:
+    # -   filters: [[35]]
   - SlidingWindow:
       window: 128
       subsample: subsample
-      estimator: _lwf
-  - DistanceCalculatorAlex:
-      metric_mean: "'logeuclid'"
-      metric_dist: "['riemann']"
-      subsample: subsample
-      n_jobs: -1
+      estimator: None
+  - FlattenTransformer:
+  # - DistanceCalculatorAlex:
+  #     metric_mean: "'logeuclid'"
+  #     metric_dist: "['riemann']"
+  #     subsample: subsample
+  #     n_jobs: -1
 
-PostPreprocessing:
-    - DelayPreds:
-        delay: 512 / subsample
-        skip: 10 / subsample
+  # PostPreprocessing:
+  #     - DelayPreds:
+  #         delay: 512 / subsample
+  #         skip: 10 / subsample
 
 Models:
-  - '("lda",LDA())'
-  - '("lr",LogisticRegression())'
+    # - '("lda",LDA())'
+  - '("lr",LinearRegression())'

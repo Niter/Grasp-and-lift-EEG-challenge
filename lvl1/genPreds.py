@@ -15,13 +15,13 @@ on raw data independently on each subjects.
 This script support caching of preprocessed data, in order to allow reuse of
 preprocessing pipeline across model.
 """
+import pdb
 import os
 import sys
 if __name__ == '__main__' and __package__ is None:
     filePath = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.append(filePath)
 
-import pdb
 import numpy as np
 import pandas as pd
 from time import time
@@ -30,7 +30,7 @@ import yaml
 from sklearn.pipeline import make_pipeline, Pipeline
 from progressbar import Bar, ETA, Percentage, ProgressBar, RotatingMarker
 
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, mean_squared_error, r2_score
 
 from preprocessing.aux import getEventNames, load_raw_data
 
@@ -67,7 +67,9 @@ def doCols(col):
         # print 'trainPreprocessed:', trainPreprocessed, trainPreprocessed.shape
         # print 'labels_train[:, col]', labels_train[:, col], labels_train[:, col].shape
         clf.fit(trainPreprocessed, labels_train[:, col])
-        p.append(clf.predict_proba(testPreprocessed)[:, 1])
+        # p.append(clf.predict_proba(testPreprocessed)[:, 1])
+        pred_y = clf.predict(testPreprocessed)
+        p.append(pred_y[:])
     return p
 
 
@@ -97,6 +99,8 @@ else: addPreprocessed = []
 pipe = []
 for item in yml['Preprocessing']:
     for method, params in item.iteritems():
+        print 'method:', method
+        print 'params:', params
         pipe.append(_from_yaml_to_func(method, params))
 preprocess_base = make_pipeline(*pipe)
 
@@ -264,7 +268,7 @@ for subject in subjects:
         pred_i = np.array(np.vstack(pred_i)).transpose()
         np.save('%s/sub%d_clf%d.npy' % (saveFolder, subject, i), pred_i)
         if not test:
-            auc = np.mean([roc_auc_score(trueVals, p) for trueVals, p in
+            auc = np.mean([r2_score(trueVals, p) for trueVals, p in
                           zip(labels_test[::subsample_test].T, pred_i.T)])
             print '%d, clf %d: %.5f' % (subject, i, auc)
 
@@ -291,7 +295,7 @@ for i in range(len(clfs)):
     # print 'preds_tot:', preds_tot, len(preds_tot), preds_tot[0].shape
     # print 'labels:', labels, len(labels), labels[0].shape
     if not test:
-        auc = [roc_auc_score(trueVals, p) for trueVals, p in zip(labels[::subsample_test].T, preds_tot[i].T)]
+        auc = [r2_score(trueVals, p) for trueVals, p in zip(labels[::subsample_test].T, preds_tot[i].T)]
         report['AUC'] = np.mean(auc)
         print np.mean(auc)
 

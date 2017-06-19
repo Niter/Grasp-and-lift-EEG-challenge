@@ -32,7 +32,8 @@ def getEventNames():
     """Return Event name."""
     # return ['HandStart', 'FirstDigitTouch', 'BothStartLoadPhase', 'LiftOff',
     #         'Replace', 'BothReleased']
-    return ['no_vel', 'pos_vel', 'neg_vel']
+    # return ['no_vel', 'pos_vel', 'neg_vel']
+    return ['velocity']
 
 
 def load_raw_data(subject, test=False):
@@ -109,23 +110,27 @@ def creat_mne_raw_object(fname, idx_subject, read_events='HO'):
         ev_fname = fname.replace('_data', '_events')
         # read event file
         events = pd.read_csv(ev_fname)
-        events_names = ['Nothing', 'Positive', 'Negative']
+        # events_names = ['Nothing', 'Positive', 'Negative']
+        events_names = ['velocity']
         # events_data = np.array(events[events_names]).T
         events_data = get_horizo_velocity() if read_events == 'HO' else \
                       get_vertic_velocity() if read_events == 'VE' else None
         # pdb.set_trace()
 
         events_data = events_data.T[idx_subject, :]
-        events = np.zeros([3, events_data.shape[0]])
-        events[0, events_data == 0] = 1
-        events[1, events_data > 0] = 1
-        events[2, events_data < 0] = 1
+        events = np.zeros([1, events_data.shape[0]])
+        events[0, :] = events_data
+        # events = np.zeros([3, events_data.shape[0]])
+        # events[0, events_data == 0] = 1
+        # events[1, events_data > 0] = 1
+        # events[2, events_data < 0] = 1
 
         # define channel type, the first is EEG, the last 6 are stimulations
-        ch_type.extend(['stim']*3)
+        ch_type.extend(['stim']*1)
         # ch_names.extend(events_names)
         ch_names = ch_names + events_names
         # concatenate event file and data
+        # pdb.set_trace()
         data = np.concatenate((data, events))
 
     # create and populate MNE info structure
@@ -304,3 +309,36 @@ class NoneTransformer(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         """Transform."""
         return None
+    
+class IdenticalTransformer(BaseEstimator, TransformerMixin):
+
+    """Return Identical Transformer."""
+
+    def __init__(self):
+        """Init."""
+        pass
+
+    def fit(self, X, y=None):
+        """Fit, not used."""
+        return self
+
+    def transform(self, X, y=None):
+        """Transform."""
+        return X
+
+class FlattenTransformer(BaseEstimator, TransformerMixin):
+
+    """Return Flatten Transformer."""
+
+    def __init__(self):
+        """Init."""
+        pass
+
+    def fit(self, X, y=None):
+        """Fit, not used."""
+        return self
+
+    def transform(self, X, y=None):
+        """Transform."""
+        res = np.reshape(X, (X.shape[0], np.prod(X.shape[1:])))
+        return res

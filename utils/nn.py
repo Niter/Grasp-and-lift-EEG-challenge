@@ -60,7 +60,7 @@ def buildNN(architecture,training_params,input_dim):
             model.add(Flatten())
         if layer_name == 'Output':
             model.add(Dense(N_EVENTS))
-            model.add(Activation('sigmoid'))
+            # model.add(Activation('tanh'))
         is_first_layer = False
 
     if not training_params.has_key('optim') or training_params['optim'] == 'sgd':
@@ -68,7 +68,7 @@ def buildNN(architecture,training_params,input_dim):
     elif training_params['optim'] == 'adam':
         optim = Adam(lr=training_params['lr'])
     
-    model.compile(loss='binary_crossentropy', optimizer=optim)
+    model.compile(loss='mean_squared_error', optimizer='rmsprop', metrics=['mse', 'mae'])
     
     return model
     

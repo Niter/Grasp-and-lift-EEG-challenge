@@ -5,7 +5,7 @@ module unload python
 module load tensorflow/1.1.0
 module load keras
 
-n_subjects=12
+n_subjects=1
 keras_python=/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python
 workdir=/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
 # array=( val test )
@@ -21,16 +21,18 @@ python genInfos.py --n_subjects=$n_subjects
 cd $workdir/lvl1
 for i in "${array[@]}"
 do
-    # # Low pass EEG model x 2
+    $keras_python genPreds.py models/CovAlex_250_35Hz.yml $i --n_subjects=$n_subjects
+
+    # Low pass EEG model x 2
     # $keras_python genPreds.py models/FBL.yml $i --n_subjects=$n_subjects &
 
     # NN models
-    $keras_python genPreds_RNN.py models/NN_16.yml val --n_subjects=$n_subjects
-    $keras_python genPreds_RNN.py models/NN_32.yml val --n_subjects=$n_subjects
-    $keras_python genPreds_RNN.py models/NN_64.yml val --n_subjects=$n_subjects
-    $keras_python genPreds_RNN.py models/NN_128.yml $i --n_subjects=$n_subjects
-    $keras_python genPreds_RNN.py models/NN_256.yml $i --n_subjects=$n_subjects
-    $keras_python genPreds_RNN.py models/NN_512.yml $i --n_subjects=$n_subjects
+    # $keras_python genPreds_RNN.py models/NN_16.yml val --n_subjects=$n_subjects
+    # $keras_python genPreds_RNN.py models/NN_32.yml val --n_subjects=$n_subjects
+    # $keras_python genPreds_RNN.py models/NN_64.yml val --n_subjects=$n_subjects
+    # $keras_python genPreds_RNN.py models/NN_128.yml $i --n_subjects=$n_subjects
+    # $keras_python genPreds_RNN.py models/NN_256.yml $i --n_subjects=$n_subjects
+    # $keras_python genPreds_RNN.py models/NN_512.yml $i --n_subjects=$n_subjects
     wait
 done
 
