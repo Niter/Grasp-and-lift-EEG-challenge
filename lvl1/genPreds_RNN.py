@@ -199,6 +199,8 @@ for subject in subjects:
 
     train_norm_meta, labels_train = normalize(labels_train)
     _, labels_test = normalize(labels_test, meta_data = train_norm_meta)
+    print 'trainPreprocessed', trainPreprocessed.shape
+    print 'labels_train', labels_train.shape
     model.fit(trainPreprocessed,labels_train,testPreprocessed,labels_test)
     
     preds = model.predict_proba(testPreprocessed)

@@ -10,29 +10,29 @@ Meta:
 
 Preprocessing:
   - FilterBank:
-      filters: [[1],[5],[10],[30]]
+     filters: [[1],[5],[10],[30]]
   - StandardScaler:
 
 Training:
   lr: 0.1
   decay: 1e-6
   momentum: 0.9
-  delay: 128
+  delay: 256
   skip: 4
   parts_train: 2
   parts_test: 1
-  smallEpochs: 2
-  majorEpochs: 5
-  checkEveryEpochs: 2
+  smallEpochs: 4
+  majorEpochs: 25
+  checkEveryEpochs: 1
   subsample: 1
 
 Architecture:
   - 'GRU':
         dropout: 0.5
-        num_units: 256
+        num_units: 32
         next_GRU: False
   - 'Dense':
-        num_units: 256
+        num_units: 32
   - 'Activation':
         type: 'relu'
   - 'Dropout':

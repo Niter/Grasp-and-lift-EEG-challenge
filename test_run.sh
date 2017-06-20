@@ -21,12 +21,17 @@ python genInfos.py --n_subjects=$n_subjects
 cd $workdir/lvl1
 for i in "${array[@]}"
 do
-    $keras_python genPreds.py models/CovAlex_250_35Hz.yml $i --n_subjects=$n_subjects
+    # $keras_python genPreds.py models/CovAlex_250_35Hz.yml $i --n_subjects=$n_subjects
 
     # Low pass EEG model x 2
     # $keras_python genPreds.py models/FBL.yml $i --n_subjects=$n_subjects &
 
     # NN models
+    for filename in models/RNN*.yml; do
+        $keras_python genPreds_RNN.py $filename $i --n_subjects=$n_subjects
+    done
+    # $keras_python genPreds_RNN.py models/RNN_FBL_PCA_128.yml $i --n_subjects=$n_subjects
+    # $keras_python genPreds_RNN.py models/RNN_FB_delay4000.yml $i --n_subjects=$n_subjects
     # $keras_python genPreds_RNN.py models/NN_16.yml val --n_subjects=$n_subjects
     # $keras_python genPreds_RNN.py models/NN_32.yml val --n_subjects=$n_subjects
     # $keras_python genPreds_RNN.py models/NN_64.yml val --n_subjects=$n_subjects

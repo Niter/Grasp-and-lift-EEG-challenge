@@ -8,7 +8,7 @@ Created on Sat Aug 15 18:18:11 2015
 import pdb
 import numpy as np
 from sklearn.base  import BaseEstimator, ClassifierMixin
-from sklearn.metrics import roc_auc_score, mean_squared_error
+from sklearn.metrics import roc_auc_score, mean_squared_error, r2_score
 
 from progressbar import Bar, ETA, Percentage, ProgressBar, RotatingMarker
 
@@ -117,7 +117,7 @@ class NeuralNet(BaseEstimator,ClassifierMixin):
                 print("Total epochs: %d" % (self.smallEpochs*(majorEpoch+1)))
                 if Xtest is not None and ytest is not None:
                     pred = self._predict_proba_train(Xtest)
-                    score = np.mean(mean_squared_error(ytest[0::self.partsTest],pred))
+                    score = np.mean(r2_score(ytest[0::self.partsTest],pred))
                     print("Test AUC : %.5f" % (score))
                     pred = None
         
