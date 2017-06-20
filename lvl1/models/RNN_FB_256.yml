@@ -1,0 +1,40 @@
+imports:
+    preprocessing.filterBank:
+        - FilterBank
+    sklearn.preprocessing:
+        - StandardScaler
+
+Meta:
+  file: 'RNN_FB_256'
+  cachePreprocessed: False
+
+Preprocessing:
+  - FilterBank:
+     filters: [[1],[5],[10],[30]]
+  - StandardScaler:
+
+Training:
+  lr: 0.1
+  decay: 1e-6
+  momentum: 0.9
+  delay: 256
+  skip: 4
+  parts_train: 2
+  parts_test: 1
+  smallEpochs: 4
+  majorEpochs: 25
+  checkEveryEpochs: 1
+  subsample: 1
+
+Architecture:
+  - 'GRU':
+        dropout: 0.5
+        num_units: 256
+        next_GRU: False
+  - 'Dense':
+        num_units: 256
+  - 'Activation':
+        type: 'relu'
+  - 'Dropout':
+        p: 0.7
+  - 'Output':
