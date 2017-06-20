@@ -7,7 +7,7 @@ imports:
         - PCA
 
 Meta:
-    file: 'NN_64'
+    file: 'NN_4'
     cachePreprocessed: False
 
 Preprocessing:
@@ -34,7 +34,7 @@ Architecture:
     - 'Dropout':
         p: 0.5
     - 'Dense':
-        num_units: 64
+        num_units: 4
     - 'Activation':
         type: 'relu'
     - 'Dropout':

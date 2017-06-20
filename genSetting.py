@@ -1,4 +1,4 @@
-def give_context(n_units):
+def give_context(model_name, n_units):
     context = '''imports:
     preprocessing.filterBank:
         - FilterBank
@@ -8,14 +8,15 @@ def give_context(n_units):
         - PCA
 
 Meta:
-    file: 'RNN_FBL_PCA_%d'
+    file: '%s'
     cachePreprocessed: False
 
 Preprocessing:
-    - FilterBank:
-        filters: [[1],[5],[10],[30]]
+    # - FilterBank:
+    #     filters: [[1],[5],[10],[30]]
     - StandardScaler:
-    - PCA:
+    # - PCA:
+
 
 Training:
     lr: 0.1
@@ -31,22 +32,26 @@ Training:
     subsample: 1
 
 Architecture:
-    - 'GRU':
-            dropout: 0.5
-            num_units: %d
-            next_GRU: False
-    - 'Dense':
-            num_units: %d
-    - 'Activation':
-            type: 'relu'
     - 'Dropout':
-            p: 0.7
+        p: 0.5
+    - 'Dense':
+        num_units: %d
+    - 'Activation':
+        type: 'relu'
+    - 'Dropout':
+        p: 0.7
     - 'Output':
-    '''%(n_units, n_units, n_units)
+    - 'Activation':
+        type: 'tanh'
+    '''%(model_name, n_units)
     return context
 
 Freqs = [4, 8, 16, 32, 64, 128, 256, 512]
 for freq in Freqs:
-    cont = give_context(freq)
-    with open('./lvl1/models/RNN_FBL_PCA_%d.yml'%freq, 'w') as f:
+    level = 1
+    model_name = 'NN_%d'%freq
+    filename = './lvl%d/models/%s.yml'%(level, model_name)
+    print 'Generating: %s'%(filename)
+    cont = give_context(model_name, freq)
+    with open(filename, 'w') as f:
         f.write(cont)

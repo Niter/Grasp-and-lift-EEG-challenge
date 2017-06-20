@@ -7,14 +7,14 @@ imports:
         - PCA
 
 Meta:
-    file: 'NN_64'
+    file: 'NN_FBL_PCA_32'
     cachePreprocessed: False
 
 Preprocessing:
-    # - FilterBank:
-    #     filters: [[1],[5],[10],[30]]
+    - FilterBank:
+        filters: [[1],[5],[10],[30]]
     - StandardScaler:
-    # - PCA:
+    - PCA:
 
 
 Training:
@@ -34,7 +34,7 @@ Architecture:
     - 'Dropout':
         p: 0.5
     - 'Dense':
-        num_units: 64
+        num_units: 32
     - 'Activation':
         type: 'relu'
     - 'Dropout':
