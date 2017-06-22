@@ -23,11 +23,11 @@ Training:
     decay: 1e-6
     momentum: 0.9
     delay: 256
-    skip: 4
+    skip: 1
     parts_train: 2
     parts_test: 1
     smallEpochs: 4
-    majorEpochs: 25
+    majorEpochs: 10
     checkEveryEpochs: 1
     subsample: 1
 

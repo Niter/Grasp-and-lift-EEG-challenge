@@ -12,4 +12,4 @@ N_EVENTS = 1
 DIRECTION_CURSOR = 'HO'
 
 # subjects = range(1, len(subjects_path_list)) # 34 subjects in total
-subjects = range(1, 3)
+# subjects = range(1, 3)

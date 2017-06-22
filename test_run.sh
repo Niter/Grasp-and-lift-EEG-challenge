@@ -5,7 +5,7 @@ module unload python
 module load tensorflow/1.1.0
 module load keras
 
-n_subjects=1
+n_subjects=4
 keras_python=/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python
 workdir=/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
 # array=( val test )
@@ -27,7 +27,7 @@ do
     # $keras_python genPreds.py models/FBL.yml $i --n_subjects=$n_subjects &
 
     # NN models
-    for filename in models/RNN*.yml; do
+    for filename in models/*NN*.yml; do
         $keras_python genPreds_RNN.py $filename $i --n_subjects=$n_subjects
     done
     # $keras_python genPreds_RNN.py models/RNN_FBL_PCA_128.yml $i --n_subjects=$n_subjects
