@@ -1,0 +1,25 @@
+
+Meta:
+  file: 'xgb_onlyNN'
+
+addSubjectID:
+
+Model:
+  XGB:
+    ensemble: [
+                'NN_16', 
+                'NN_32', 
+                'NN_64', 
+                'NN_128',
+                'NN_256',
+                'NN_512',
+                ]
+    n_estimators: 150
+    max_depth: 5
+    subsample: 0.7
+    
+    delay: 500
+    skip: 50
+    
+    subsample_data: 50
+    partsTest: 4

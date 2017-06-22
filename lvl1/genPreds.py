@@ -37,7 +37,6 @@ from preprocessing.aux import getEventNames, load_raw_data
 from multiprocessing import Pool
 
 from read_adapter import subjects_path_list
-from eeg_config import subjects
 import argparse
 
 parser = argparse.ArgumentParser()

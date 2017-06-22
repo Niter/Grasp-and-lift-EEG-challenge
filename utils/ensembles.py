@@ -28,12 +28,32 @@ def getFastLvl1ModelList():
     files = [
             ['FBL', ['FBL_L1', 'FBL_L2', 'FBL_Sc', 'FBL_LDA', 'FBL_LDA_L1']],
 
+            ['NN_4', ['NN_4']],
+            ['NN_8', ['NN_8']],
             ['NN_16', ['NN_16']],
             ['NN_32', ['NN_32']],
             ['NN_64', ['NN_64']],
             ['NN_128', ['NN_128']],
             ['NN_256', ['NN_256']],
             ['NN_512', ['NN_512']],
+
+            ['NN_FBL_4', ['NN_FBL_4']],
+            ['NN_FBL_8', ['NN_FBL_8']],
+            ['NN_FBL_16', ['NN_FBL_16']],
+            ['NN_FBL_32', ['NN_FBL_32']],
+            ['NN_FBL_64', ['NN_FBL_64']],
+            ['NN_FBL_128', ['NN_FBL_128']],
+            ['NN_FBL_256', ['NN_FBL_256']],
+            ['NN_FBL_512', ['NN_512']],
+
+            ['NN_FBL_PCA_4', ['NN_FBL_PCA_4']],
+            ['NN_FBL_PCA_8', ['NN_FBL_PCA_8']],
+            ['NN_FBL_PCA_16', ['NN_FBL_PCA_16']],
+            ['NN_FBL_PCA_32', ['NN_FBL_PCA_32']],
+            ['NN_FBL_PCA_64', ['NN_FBL_PCA_64']],
+            ['NN_FBL_PCA_128', ['NN_FBL_PCA_128']],
+            ['NN_FBL_PCA_256', ['NN_FBL_PCA_256']],
+            ['NN_FBL_PCA_512', ['NN_FBL_PCA_512']],
 
             ]
     return files

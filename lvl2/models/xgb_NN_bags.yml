@@ -1,0 +1,28 @@
+
+Meta:
+  file: 'xgb_NN_FBL_bags'
+  nbags: 15
+  bagsize: 8
+
+Model:
+  XGB:
+    ensemble: [
+                'FBL_L1', 'FBL_L2', 'FBL_Sc', 'FBL_LDA', 'FBL_LDA_L1', 
+                
+                'NN_4', 
+                'NN_8', 
+                'NN_16', 
+                'NN_32', 
+                'NN_64', 
+                'NN_128',
+                'NN_256',
+                'NN_512',
+                
+                # 'RNN_FB_delay4000',
+                ]
+    n_estimators: 150
+    max_depth: 5
+    subsample: 0.7
+    
+    subsample_data: 50
+    partsTest: 1

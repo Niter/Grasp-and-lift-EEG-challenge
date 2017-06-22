@@ -15,24 +15,22 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from glob import glob
 
 import pdb
-from eeg_config import CH_NAMES
+from eeg_config import CH_NAMES, DIRECTION_CURSOR, IS_CLASSIFICATION
 from read_adapter import get_all_horizon_path_from_the_subject, get_all_vertical_path_from_the_subject, get_horizo_velocity, get_vertic_velocity
 
 
 def getChannelNames():
     """Return Channels names."""
-    # return ['Fp1', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2',
-    #         'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'TP9', 'CP5', 'CP1', 'CP2',
-    #         'CP6', 'TP10', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO9', 'O1', 'Oz',
-    #         'O2', 'PO10']
     return CH_NAMES
 
 
 def getEventNames():
     """Return Event name."""
-    # return ['HandStart', 'FirstDigitTouch', 'BothStartLoadPhase', 'LiftOff',
-    #         'Replace', 'BothReleased']
-    return ['no_vel', 'pos_vel', 'neg_vel']
+    if IS_CLASSIFICATION:
+        return ['no_vel', 'pos_vel', 'neg_vel']
+    else:  
+        # Regression
+        return ['velocity']
 
 
 def load_raw_data(subject, test=False):
@@ -44,8 +42,10 @@ def load_raw_data(subject, test=False):
     of series 9 and test. Otherwise, training data are series 1 to 6 and test
     data series 7 and 8.
     """
+    action_1D_type = DIRECTION_CURSOR
+    all_train_path_from_the_subject = get_all_vertical_path_from_the_subject(subject) if action_1D_type == 'VE' else get_all_horizon_path_from_the_subject(subject)
     # fnames_train = glob('../data/train/subj%d_series*_data.csv' % (subject))
-    fnames_train = glob(get_all_vertical_path_from_the_subject(subject))
+    fnames_train = glob(all_train_path_from_the_subject)
     fnames_train.sort()
     if test:
         fnames_test = fnames_train[-1:]
@@ -58,7 +58,6 @@ def load_raw_data(subject, test=False):
 
     # read and concatenate all the files
     # action_1D_type = 'HO'
-    action_1D_type = 'VE'
     raw_train = [creat_mne_raw_object(fname, i, read_events=action_1D_type) for i, fname in enumerate(fnames_train)]
     raw_train = concatenate_raws(raw_train)
     # pick eeg signal
@@ -109,23 +108,33 @@ def creat_mne_raw_object(fname, idx_subject, read_events='HO'):
         ev_fname = fname.replace('_data', '_events')
         # read event file
         events = pd.read_csv(ev_fname)
-        events_names = ['Nothing', 'Positive', 'Negative']
-        # events_data = np.array(events[events_names]).T
         events_data = get_horizo_velocity() if read_events == 'HO' else \
                       get_vertic_velocity() if read_events == 'VE' else None
         # pdb.set_trace()
 
         events_data = events_data.T[idx_subject, :]
-        events = np.zeros([3, events_data.shape[0]])
-        events[0, events_data == 0] = 1
-        events[1, events_data > 0] = 1
-        events[2, events_data < 0] = 1
+        if IS_CLASSIFICATION:
+            # Classification, to predict the direction of the velocity of the cursor: 0 -> Nothing, 1 -> Positive, 2 -> Negative
+            events_names = ['Nothing', 'Positive', 'Negative']
+            events = np.zeros([3, events_data.shape[0]])
+            events[0, events_data == 0] = 1
+            events[1, events_data > 0] = 1
+            events[2, events_data < 0] = 1
+            # define channel type, the first is EEG, the last 6 are stimulations
+            ch_type.extend(['stim']*3)
+        else:
+            # Regression, to predict the velocity (which is a real number)
+            events_names = ['velocity']
+            events = np.zeros([1, events_data.shape[0]])
+            events[0, :] = events_data
+            # define channel type, the first is EEG, the last 6 are stimulations
+            ch_type.extend(['stim']*1)
 
-        # define channel type, the first is EEG, the last 6 are stimulations
-        ch_type.extend(['stim']*3)
+
         # ch_names.extend(events_names)
         ch_names = ch_names + events_names
         # concatenate event file and data
+        # pdb.set_trace()
         data = np.concatenate((data, events))
 
     # create and populate MNE info structure
@@ -304,3 +313,36 @@ class NoneTransformer(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         """Transform."""
         return None
+    
+class IdenticalTransformer(BaseEstimator, TransformerMixin):
+
+    """Return Identical Transformer."""
+
+    def __init__(self):
+        """Init."""
+        pass
+
+    def fit(self, X, y=None):
+        """Fit, not used."""
+        return self
+
+    def transform(self, X, y=None):
+        """Transform."""
+        return X
+
+class FlattenTransformer(BaseEstimator, TransformerMixin):
+
+    """Return Flatten Transformer."""
+
+    def __init__(self):
+        """Init."""
+        pass
+
+    def fit(self, X, y=None):
+        """Fit, not used."""
+        return self
+
+    def transform(self, X, y=None):
+        """Transform."""
+        res = np.reshape(X, (X.shape[0], np.prod(X.shape[1:])))
+        return res
