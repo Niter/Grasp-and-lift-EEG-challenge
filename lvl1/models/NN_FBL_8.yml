@@ -22,7 +22,7 @@ Training:
     decay: 1e-6
     momentum: 0.9
     delay: 128
-    skip: 1
+    skip: 4
     parts_train: 2
     parts_test: 1
     smallEpochs: 4

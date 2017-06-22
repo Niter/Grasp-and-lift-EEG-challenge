@@ -5,18 +5,16 @@ module unload python
 module load tensorflow/1.1.0
 module load keras
 
-n_subjects=12
+n_subjects=1
 keras_python=/opt/packages/keras/keras_2.0.4/kerasEnv/bin/python
 workdir=/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge
 # array=( val test )
 array=( val )
 
 cd $workdir
-#  python genInfos.py --n_subjects=$n_subjects
-# find $workdir/lvl1/val/ -type f -name "*" -print0 | xargs -0 rm --
-# rm -rf $workdir/lvl1/val/*
-# find $workdir/lvl1/report/ -type f -name '*.csv' -print0 | xargs -0 rm --
-# rm -rf $workdir/lvl1/report/*
+python genInfos.py --n_subjects=$n_subjects
+rm -rf $workdir/lvl1/val/*
+rm -rf $workdir/lvl1/report/*
 
 cd $workdir/lvl1
 for i in "${array[@]}"
