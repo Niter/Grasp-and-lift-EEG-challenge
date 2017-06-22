@@ -16,7 +16,7 @@ from keras.optimizers import SGD, Adam
 from keras.regularizers import l2
 
 
-from eeg_config import N_EVENTS
+from eeg_config import N_EVENTS, OUT_ACTIVATION
 
 def buildNN(architecture,training_params,input_dim):
     """Lay out a Neural Network as described in the YAML file."""
@@ -60,7 +60,12 @@ def buildNN(architecture,training_params,input_dim):
             model.add(Flatten())
         if layer_name == 'Output':
             model.add(Dense(N_EVENTS))
-            model.add(Activation('sigmoid'))
+            if OUT_ACTIVATION == 'sigmoid':
+                model.add(Activation('sigmoid', name='output_sigmoid'))
+            elif OUT_ACTIVATION == 'softmax':
+                model.add(Activation('softmax', name='output_softmax'))
+            else:
+                raise Exception('OUT_ACTIVATION in eeg_config.py should be either sigmoid or softmax')
         is_first_layer = False
 
     if not training_params.has_key('optim') or training_params['optim'] == 'sgd':

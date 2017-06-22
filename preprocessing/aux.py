@@ -15,7 +15,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from glob import glob
 
 import pdb
-from eeg_config import CH_NAMES, DIRECTION_CURSOR, IS_CLASSIFICATION
+from eeg_config import CH_NAMES, DIRECTION_CURSOR, IS_CLASSIFICATION, OUT_ACTIVATION
 from read_adapter import get_all_horizon_path_from_the_subject, get_all_vertical_path_from_the_subject, get_horizo_velocity, get_vertic_velocity
 
 
@@ -115,13 +115,22 @@ def creat_mne_raw_object(fname, idx_subject, read_events='HO'):
         events_data = events_data.T[idx_subject, :]
         if IS_CLASSIFICATION:
             # Classification, to predict the direction of the velocity of the cursor: 0 -> Nothing, 1 -> Positive, 2 -> Negative
-            events_names = ['Nothing', 'Positive', 'Negative']
-            events = np.zeros([3, events_data.shape[0]])
-            events[0, events_data == 0] = 1
-            events[1, events_data > 0] = 1
-            events[2, events_data < 0] = 1
-            # define channel type, the first is EEG, the last 6 are stimulations
-            ch_type.extend(['stim']*3)
+            if OUT_ACTIVATION == 'sigmoid' or OUT_ACTIVATION == 'softmax':
+                events_names = ['Nothing', 'Positive', 'Negative']
+                events = np.zeros([3, events_data.shape[0]])
+                events[0, events_data == 0] = 1
+                events[1, events_data > 0] = 1
+                events[2, events_data < 0] = 1
+                ch_type.extend(['stim']*3)
+            # elif OUT_ACTIVATION == 'softmax':
+            #     events_names = ['direction']
+            #     events = np.zeros([1, events_data.shape[0]])
+            #     events[0, events_data == 0] = 0
+            #     events[0, events_data > 0] = 1
+            #     events[0, events_data < 0] = 2
+            #     ch_type.extend(['stim']*1)
+            else:
+                raise Exception('OUT_ACTIVATION in eeg_config.py should be either sigmoid or softmax')
         else:
             # Regression, to predict the velocity (which is a real number)
             events_names = ['velocity']
