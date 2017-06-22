@@ -44,7 +44,7 @@ def getFastLvl1ModelList():
             ['NN_FBL_64', ['NN_FBL_64']],
             ['NN_FBL_128', ['NN_FBL_128']],
             ['NN_FBL_256', ['NN_FBL_256']],
-            ['NN_FBL_512', ['NN_512']],
+            ['NN_FBL_512', ['NN_FBL_512']],
 
             ['NN_FBL_PCA_4', ['NN_FBL_PCA_4']],
             ['NN_FBL_PCA_8', ['NN_FBL_PCA_8']],

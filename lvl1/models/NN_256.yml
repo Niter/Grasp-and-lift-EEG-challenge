@@ -26,7 +26,7 @@ Training:
     parts_train: 2
     parts_test: 1
     smallEpochs: 4
-    majorEpochs: 10
+    majorEpochs: 4
     checkEveryEpochs: 1
     subsample: 1
 

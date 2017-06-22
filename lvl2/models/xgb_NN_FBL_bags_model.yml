@@ -2,7 +2,7 @@
 Meta:
   file: 'xgb_NN_FBL_bags_model'
   nbags: 15
-  bagsize: 20
+  bagsize: 8
 
 addSubjectID:
 

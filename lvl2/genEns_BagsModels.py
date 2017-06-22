@@ -157,6 +157,7 @@ if test:
     # switch to add subjects
     if addSubjectID:
         dataTest = np.c_[dataTest, subjects_test]
+        selected_model = np.append(selected_model, np.array([False]))
 
     # get predictions
     p = np.zeros((len(ids),6))
@@ -186,6 +187,8 @@ else:
             
             selected_model = np.repeat(selected_model,N_EVENTS)
             allbags.append(selected_model)
+            if addSubjectID:
+                selected_model = np.append(selected_model, np.array([False]))
             model.mdlNr = k
             if modelName == 'NeuralNet':
                 model.fit(dataTrain[train][:, selected_model], labels[train], dataTrain[test][:, selected_model], labels[test])
