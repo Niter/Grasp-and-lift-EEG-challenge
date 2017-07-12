@@ -1,7 +1,8 @@
+import pdb
 from glob import glob
 import scipy.io as sio
 
-DATA_PREPATH = '/home/lucien/eeg_mibk/Grasp-and-lift-EEG-challenge/data/'
+DATA_PREPATH = './data/'
 subjects_path_list = glob(DATA_PREPATH + '*/')
 
 def get_all_horizon_path_from_the_subject(idx_subject):

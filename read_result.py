@@ -144,7 +144,7 @@ report = pd.DataFrame(index=[fileName])
 # #### generate predictions #####
 
 if not test:
-    labels = np.load('../infos_val.npy')[:, :-1]
+    labels = np.load('./infos_val.npy')[:, :-1]
 
 # ## AGGREGATE HERE
 preds_tot = []

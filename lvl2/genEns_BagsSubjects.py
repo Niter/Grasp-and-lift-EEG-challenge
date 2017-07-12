@@ -186,4 +186,4 @@ else:
 
 end_time = time()
 report['Time'] = end_time - start_time
-report.to_csv("report/%s_%s.csv" % (prefix, fileName))
+report.to_csv("lvl2/report/%s_%s.csv" % (prefix, fileName))

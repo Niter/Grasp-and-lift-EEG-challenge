@@ -1,6 +1,6 @@
 
 Meta:
-  file: 'xgb_NN_FBL_bags'
+  file: 'xgb_NN_FBL_PCA_bags'
   nbags: 15
   bagsize: 8
 

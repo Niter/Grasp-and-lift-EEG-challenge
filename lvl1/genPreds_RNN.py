@@ -205,7 +205,7 @@ for subject in subjects:
 
 
 if not test:
-    labels = np.load('../infos_val.npy')[:, :-2]
+    labels = np.load('./infos_val.npy')[:, :-2]
 
 # ## AGGREGATE HERE
 preds_tot = []
@@ -223,5 +223,5 @@ preds_tot = [preds_tot]
 np.save(folder + prefix + fileName + '.npy', preds_tot)
 end_time = time()
 report['Time'] = end_time - start_time
-report.to_csv("report/%s_%s.csv" % (prefix, fileName))
+report.to_csv("lvl1/report/%s_%s.csv" % (prefix, fileName))
 print report
